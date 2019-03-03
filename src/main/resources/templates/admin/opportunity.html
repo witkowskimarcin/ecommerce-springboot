@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table border="1">
+		<tr>
+		<td>id</td>
+		<td>id produktu</td>
+		<td>nazwa produktu</td>
+		<td>kod promocji</td>
+		<td></td>
+		</tr>
+		<tr th:if="${exist}">
+			<td th:utext="${opportunity.id}"></td>
+			<td><a th:utext="${opportunity.product.id}"></a></td>
+			<td><a th:href="@{/products/product(code=${opportunity.product.id})}" th:utext="${opportunity.product.name}"></a></td>
+			<td><a th:utext="${opportunity.promotionCode}"></a></td>
+			<td><a th:utext="Usuń" th:href="@{/admin/opportunity/remove}"></a></td>
+		</tr>
+	</table>
+	<a th:href="@{/admin/opportunity/add}">Dodaj opportunity</a>
+	<br>
+	<a th:href="@{/admin/}">Cofnij</a>
+</body>
+</html>

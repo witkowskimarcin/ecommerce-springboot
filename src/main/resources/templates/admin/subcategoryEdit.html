@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Moja strona</title>
+
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<script src="/js/popper.min.js"></script>
+	<script src="/js/jquery-3.3.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+	<h1>Edytuj subkategorie o id: <span th:text="${subcategory.id}"></span></h1>
+	<br><br>
+
+	<form class="form-horizontal" role="form" method="POST" th:action="@{/admin/categories/category/editSubCat(id=${subcategory.id})}" th:object="${subcategory}">
+		Nazwa: <input id="name" name="name" class="form-control" th:value="${subcategory.name}" required autofocus>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Edytuj kategorie</button>
+	</form>
+
+	<br>
+	<a th:href="@{/admin/categories/subcategories(id=${catId})}">Cofnij</a>
+</div>
+</body>
+</html>

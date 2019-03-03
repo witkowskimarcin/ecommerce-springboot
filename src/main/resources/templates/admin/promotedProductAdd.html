@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Moja strona</title>
+
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<script src="/js/popper.min.js"></script>
+	<script src="/js/jquery-3.3.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+	<h1>Dodaj promotedProduct</h1>
+	<br><br>
+
+	<form class="form-horizontal" role="form" method="POST" th:action="@{/admin/promotedProducts/add}">
+		<input type="number" id="prodId" name="prodId" class="form-control" placeholder="ID Produktu" required autofocus>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Dodaj promotedProduct</button>
+	</form>
+
+	<br><br>
+	<a th:href="@{/admin/promotedProducts}">Cofnij</a>
+</div>
+</body>
+</html>

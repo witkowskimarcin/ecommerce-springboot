@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table border="1">
+		<tr>
+		<td>id</td>
+		<td>nazwa</td>
+		<td></td>
+		<td></td>
+		</tr>
+		<tr th:each="category : ${categories}">
+			<td th:utext="${category.id}"></td>
+			<td><a th:href="@{/admin/categories/subcategories(id=${category.id})}" th:utext="${category.name}"></a></td>
+			<td><a th:utext="Edytuj" th:href="@{/admin/categories/edit(id=${category.id})}"></a></td>
+			<td><a th:utext="Usuń" th:href="@{/admin/categories/remove(id=${category.id})}"></a></td>
+		</tr>
+	</table>
+	<a th:href="@{/admin/categories/add}">Dodaj kategorie</a>
+	<br>
+	<a th:href="@{/admin/}">Cofnij</a>
+</body>
+</html>

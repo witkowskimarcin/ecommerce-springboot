@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Moja strona</title>
+
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<script src="/js/popper.min.js"></script>
+	<script src="/js/jquery-3.3.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+	<h1>Dodaj produkt</h1>
+	<br>
+
+	<form class="form-horizontal" role="form" method="POST" th:action="@{/admin/products/add(subCatId=${subCatId})}" th:object="${productAddForm}" enctype="multipart/form-data">
+		<label>Nazwa produktu</label> 
+		<input type="text" id="name" name="name" class="form-control" placeholder="Nazwa produktu" required autofocus>
+		<textarea id="description" name="description" class="form-control" placeholder="Opis produktu" required autofocus></textarea>
+		<input type="number" id="price" name="price" class="form-control" placeholder="Cena produktu" required autofocus>
+		<input type="number" id="quantity" name="quantity" class="form-control" placeholder="Ilość produktu" required autofocus>
+		<input type="file" name="files" multiple>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Dodaj produkt</button>
+	</form>
+	<a th:href="@{/admin/products(subCatId=${subCatId})}">Cofnij</a>
+</div>
+</body>
+</html>

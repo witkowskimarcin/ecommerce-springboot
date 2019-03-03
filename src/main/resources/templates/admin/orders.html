@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<table class="table table-striped">
+<tr>
+			<th>order id</th>
+			<th>customer id</th>
+			<th>firstname</th>
+			<th>lastname</th>
+			<th>locality</th>
+			<th>street</th>
+			<th>zipcode</th>
+			<th>shipment</th>
+			<th>description</th>
+			<th></th>
+		<tr th:each="order : ${orders}">
+
+			<td th:utext="${order.id}">...</td>
+			<td th:utext="${order.customer.id}">...</td>
+			<td th:utext="${order.firstname}">...</td>
+			<td th:utext="${order.lastname}">...</td>
+			<td th:utext="${order.locality}">...</td>
+			<td th:utext="${order.street}">...</td>
+			<td th:utext="${order.zipCode}">...</td>
+			<td th:utext="${order.phone}">...</td>
+			<td th:utext="${order.shipment}">...</td>
+			<td th:utext="${order.description}">...</td>
+			<td><a th:utext="Szczegóły" th:href="@{/admin/order/details(oId=${order.id})}"></a></td>
+			<!--<td><a th:utext="Usuń" th:href="@{/admin/orders/remove(oId=${order.id})}"></a></td>-->
+		</tr>
+	</table>
+<br>
+	<a th:href="@{/admin/}">Cofnij</a>
+
+</body>
+</html>
