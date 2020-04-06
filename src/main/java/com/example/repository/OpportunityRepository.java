@@ -1,6 +1,6 @@
 package com.example.repository;
 
-import com.example.model.Opportunity;
+import com.example.entity.Opportunity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

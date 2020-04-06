@@ -1,8 +1,8 @@
 package com.example;
 
-import com.example.model.Role;
-import com.example.model.RoleName;
-import com.example.model.User;
+import com.example.entity.Role;
+import com.example.entity.RoleName;
+import com.example.entity.User;
 import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,13 +3,16 @@ package com.example.controller.rest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.example.entity.*;
 import com.example.model.*;
 import com.example.repository.*;
-import com.example.security.services.PromotedProductService;
+import com.example.service.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -26,133 +29,97 @@ public class MainRestController {
 	@Autowired private CategoryRepository categoryRepository;
 	@Autowired private SubcategoryRepository subcategoryRepository;
 	@Autowired private PromotedProductRepository promotedProductRepository;
-	@Autowired private PromotedProductService promotedProductService;
 	@Autowired private OpportunityRepository opportunityRepository;
 	@Autowired private OrderRepository orderRepository;
 	@Autowired private OrderDetailRepository orderDetailRepository;
 	@Autowired private UserRepository userRepository;
 	@Autowired private HttpSession session;
 
+	private UserService userService;
+	private ImageService imageService;
+	private CategoryService categoryService;
+	private SubcategoryService subcategoryService;
+	private ProductService productService;
+	private PromotedProductService promotedProductService;
+	private OpportunityService opportunityService;
+	private OrderService orderService;
+	private OrderDetailService orderDetailService;
+	private CartService cartService;
+
+	public MainRestController(UserService userService, ImageService imageService, CategoryService categoryService, SubcategoryService subcategoryService, ProductService productService, PromotedProductService promotedProductService, OpportunityService opportunityService, OrderService orderService, OrderDetailService orderDetailService, CartService cartService)
+	{
+		this.userService = userService;
+		this.imageService = imageService;
+		this.categoryService = categoryService;
+		this.subcategoryService = subcategoryService;
+		this.productService = productService;
+		this.promotedProductService = promotedProductService;
+		this.opportunityService = opportunityService;
+		this.orderService = orderService;
+		this.orderDetailService = orderDetailService;
+		this.cartService = cartService;
+	}
+
 	@GetMapping(value="/getsessionid")
-	public Map<String,Object> getSessionId(){
+	public ResponseEntity getSessionId(){
 
 		Map<String,Object> map = new HashMap<>();
 		map.put("JSESSIONID",session.getId());
 
-		return map;
+		return new ResponseEntity(map, HttpStatus.OK);
 	}
 
 	@GetMapping(value="/categories")
-	public List<Category> categories(){
-		return categoryRepository.findAll();
+	public ResponseEntity<List<CategoryModel>> categories(){
+		return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
 	}
 
-	@GetMapping(value="/subcategories")
-	public List<Subcategory> subcategories(){
-		return (List<Subcategory>) subcategoryRepository.findAll();
+	@GetMapping(value="/category/{id}")
+	public ResponseEntity<CategoryModel> category(@PathVariable(value = "id") Long id){
+		return new ResponseEntity<>(categoryService.getCategoryById(id), HttpStatus.OK);
+	}
+
+	@GetMapping(value="/category/{id}/subcategories")
+	public ResponseEntity<List<SubcategoryModel>> subcategories(@PathVariable(value = "id") Long id){
+		return new ResponseEntity<>(subcategoryService.getAllSubcategoriesByCategoryId(id), HttpStatus.OK);
 	}
 
 	@GetMapping(value="/opportunity")
-	public Opportunity opportunity(){
-		if(opportunityRepository.findAll().iterator().hasNext())
-			return opportunityRepository.findAll().iterator().next();
-		return null;
+	public ResponseEntity<OpportunityModel> opportunity(){
+		return new ResponseEntity<>(opportunityService.getOpportunity(), HttpStatus.OK);
 	}
 
 	@GetMapping(value="/promotedproducts")
-	public List<PromotedProduct> promotedproducts(){
-		return (List<PromotedProduct>) promotedProductRepository.findAll();
+	public ResponseEntity<List<PromotedProductModel>> promotedproducts(){
+		return new ResponseEntity<>(promotedProductService.getAll(), HttpStatus.OK);
 	}
 
 	@GetMapping(value="/logged")
-	public String logged(HttpSession session){
-		JSONObject json = new JSONObject();
+	public ResponseEntity<SessionModel> logged(HttpSession session){
 
-		String username;
-		try {
-			UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			username = userDetails.getUsername();
-		} catch (ClassCastException e) {
-			username = "anonymousUser";
-		}
-		boolean logged = !(username.equals("anonymousUser"));
+		SessionModel sessionModel = new SessionModel();
+		UserModel currentUser = userService.getCurrentUser();
+		CartModel cartModel = CartModel.getCartInSession(session);
+		sessionModel.setUser(currentUser);
+		sessionModel.setCartQuantity(cartModel.getQuantity());
 
-		json.put("logged",logged);
-		json.put("username",username);
-
-		Cart cart = Cart.getCartInSession(session);
-		json.put("cartQuantity",cart.getQuantity());
-
-		return json.toString();
-	}
-
-	@GetMapping(value="/home", produces = "application/json")
-	public String home(){
-
-		JSONObject json = new JSONObject();
-
-		json.put("categories",categoryRepository.findAll());
-
-		if(opportunityRepository.count()>0) {
-			JSONObject opportunity = new JSONObject(((ArrayList<Opportunity>) opportunityRepository.findAll()).get(0));
-			opportunity.put("opportunityExist",true);
-			json.put("opportunity",opportunity);
-
-		}
-		else
-		{
-			JSONObject opportunity = new JSONObject();
-			opportunity.put("opportunityExist",false);
-			json.put("opportunity",opportunity);
-		}
-
-		json.put("promotedproducts", promotedProductRepository.findAll());
-
-		return json.toString();
+		return new ResponseEntity<>(sessionModel, HttpStatus.OK);
 	}
 
 	// --------------------------------------
 	// PRODUKTY
 	// --------------------------------------
 
-//    @GetMapping(value="/product/{prodId}", produces = "application/json")
-//    public Product getProductById(@PathVariable Long prodId) {
-//        return productRepository.findById(prodId).get();
-//    }
-
-	@GetMapping(value="/products", produces = "application/json")
-	public List<Product> getProductsBySubcategoryId(@RequestParam(value = "subCatId", required = true) Long subCatId) {
-
-		return productRepository.findAllBySubcategory(subcategoryRepository.findById(subCatId).get());
+	@GetMapping(value="/subcatgory/{sid}/products", produces = "application/json")
+	public ResponseEntity<List<ProductModel>> getProductsBySubcategoryId(@PathVariable(value = "sid") Long id) {
+		return new ResponseEntity<>(productService.getProductsBySubcategoryId(id), HttpStatus.OK);
 	}
 
-	@GetMapping(value="/products/product", produces = "application/json")
-	public Product getProductById(@RequestParam(value = "code", required = true) Long prodId) {
-		return productRepository.findById(prodId).get();
-	}
+	@GetMapping(value="/product/{id}", produces = "application/json")
+    public ResponseEntity<ProductModel> getProductById(@PathVariable Long id) {
+        return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
+    }
 
-	// dodawanie produktu do koszyka
-	@GetMapping(value = "/products/product/add", produces = "application/json")
-	public String addProductToCart(@RequestParam(value = "code", required=true) long product_code) {
-
-		Cart cart = Cart.getCartInSession(session);
-
-		// dodawanie produktu do koszyka
-		if (product_code!=0) {
-			Product product = productRepository.findById(product_code);
-			cart.addProduct(product);
-			System.out.println("Dodano produkt o kodzie " + product_code);
-			System.out.println("Produkty w koszyku: ");
-			System.out.println("SESSIONID: "+session.getId());
-
-			cart.getProducts().forEach( (key,value)->System.out.println(key.getName() + ":" + value) );
-		}
-
-		JSONObject json = new JSONObject();
-		json.put("success",true);
-
-		return json.toString();
-	}
 
 	// --------------------------------------
 	// !PRODUKTY
@@ -163,72 +130,37 @@ public class MainRestController {
 	// --------------------------------------
 
 	@GetMapping(value="/cart", produces = "application/json")
-	public String getCart() {
+	public ResponseEntity getCart() {
 
-		Cart cart = Cart.getCartInSession(session);
-
-		JSONObject model = new JSONObject();
-		JSONObject koszyk = new JSONObject();
-		koszyk.put("products",cart.getProductList());
-		koszyk.put("quantities",cart.getQuantity());
-		model.put("cart",cart.getProductList());
-		model.put("sum",cart.getSum());
-		return new JSONArray().put(model).toString();
+		return new ResponseEntity(cartService.getCart(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = { "/cart/plus" }, method = RequestMethod.GET)
-	public String cartPlus(@RequestParam(value = "code", required=true) long product_code) {
+	@GetMapping(value = "/cart/product/{id}/add", produces = "application/json")
+	public ResponseEntity addProductToCart(@PathVariable(value = "id", required=true) Long pid) {
 
-		Cart cart = Cart.getCartInSession(session);
-
-		// dodawanie produktu do koszyka
-		if (product_code !=0) {
-			Product product = productRepository.findById(product_code);
-			cart.addProduct(product);
-			System.out.println("Dodano produkt o kodzie " + product_code);
-			System.out.println("Produkty w koszyku: ");
-
-			// wypis
-			cart.getProducts().forEach( (key,value)->System.out.println(key.getName() + ":" + value) );
-		}
-
-		JSONObject json = new JSONObject();
-		json.put("success",true);
-
-		return json.toString();
+		cartService.addProductToCart(pid);
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = { "/cart/minus" }, method = RequestMethod.GET)
-	public String cartMinus(HttpSession session, @RequestParam(value = "code", required=true) long product_code) {
+	@RequestMapping(value = { "/cart/product/{id}/plus" }, method = RequestMethod.GET)
+	public ResponseEntity cartPlus(@PathVariable(value = "id", required=true) Long id) {
 
-		Cart cart = Cart.getCartInSession(session);
-
-		// dodawanie produktu do koszyka
-		if (product_code!=0) {
-			Product product = productRepository.findById(product_code);
-			cart.removeProduct(product);
-			System.out.println("Dodano produkt o kodzie " + product_code);
-			System.out.println("Produkty w koszyku: ");
-
-			cart.getProducts().forEach( (key,value)->System.out.println(key.getName() + ":" + value) );
-		}
-
-		JSONObject json = new JSONObject();
-		json.put("success",true);
-
-		return json.toString();
+		cartService.incrementAmountOfProduct(id);
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@GetMapping("/cart/removeAll")
-	public String removeCart() {
+	@RequestMapping(value = { "/cart/product/{id}/minus" }, method = RequestMethod.GET)
+	public ResponseEntity cartMinus(@PathVariable(value = "id", required=true) Long id) {
 
-		Cart cart = Cart.getCartInSession(session);
-		cart.removeCart();
+		cartService.decrementAmountOfProduct(id);
+		return new ResponseEntity(HttpStatus.OK);
+	}
 
-		JSONObject json = new JSONObject();
-		json.put("success",true);
+	@GetMapping("/cart/clear")
+	public ResponseEntity removeCart() {
 
-		return json.toString();
+		cartService.clearCart();
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	// --------------------------------------
@@ -279,15 +211,15 @@ public class MainRestController {
 
 		// wypis ID sesji
 		System.out.println("ID sesji:" + session.getId());
-		Cart cart = Cart.getCartInSession(session);
+		CartModel cartModel = CartModel.getCartInSession(session);
 
-		model.put("cart",cart.getProductList());
-		model.put("sum",cart.getSum());
+		model.put("cart", cartModel.getProductList());
+		model.put("sum", cartModel.getSum());
 
 		System.out.println("Produkty w koszyku:");
-		cart.getProducts().forEach( (key,value)->System.out.println(key.getName() + ":" + value) );
+		cartModel.getProducts().forEach( (key, value)->System.out.println(key.getName() + ":" + value) );
 
-		model.put("cartQuantity",cart.getQuantity());
+		model.put("cartQuantity", cartModel.getQuantity());
 
 		return model.toString();
 	}
@@ -329,12 +261,12 @@ public class MainRestController {
 
 		// wypis ID sesji
 		System.out.println("ID sesji:" + session.getId());
-		Cart cart = (Cart) session.getAttribute("myCart");
+		CartModel cartModel = (CartModel) session.getAttribute("myCart");
 
-		model.put("cart",cart.getProductList());
-		model.put("sum",cart.getSum());
+		model.put("cart", cartModel.getProductList());
+		model.put("sum", cartModel.getSum());
 
-		if(cart!=null) {
+		if(cartModel !=null) {
 
 			Date now = new Date();
 
@@ -342,7 +274,7 @@ public class MainRestController {
 			order.setCustomer(userRepository.findByUsername(username).get());
 
 			List<OrderDetail> orderDetailList = new ArrayList<>();
-			cart.getProducts().forEach((k,v)->{
+			cartModel.getProducts().forEach((k, v)->{
 				OrderDetail orderDetail = new OrderDetail();
 				orderDetail.setProduct(k);
 				orderDetail.setQuantity(v);
@@ -414,7 +346,7 @@ public class MainRestController {
 
 		// wypis ID sesji
 		System.out.println("ID sesji:" + session.getId());
-		Cart cart = Cart.getCartInSession(session);
+		CartModel cartModel = CartModel.getCartInSession(session);
 
 		Order order = (Order) session.getAttribute("myOrder");
 
@@ -455,15 +387,15 @@ public class MainRestController {
 			}
 		}
 
-		cart.removeCart();
+		cartModel.removeCart();
 
 		session.removeAttribute("myOrder");
 
-		cart = Cart.getCartInSession(session);
+		cartModel = CartModel.getCartInSession(session);
 
-		model.addObject("cart",cart.getProducts());
-		model.addObject("sum",cart.getSum());
-		model.addObject("cartQuantity",cart.getQuantity());
+		model.addObject("cart", cartModel.getProducts());
+		model.addObject("sum", cartModel.getSum());
+		model.addObject("cartQuantity", cartModel.getQuantity());
 
 		return new JSONArray().put(model.getModel()).toString();
 	}

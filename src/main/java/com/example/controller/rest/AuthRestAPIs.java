@@ -23,9 +23,9 @@ import com.example.message.request.LoginForm;
 import com.example.message.request.SignUpForm;
 import com.example.message.response.JwtResponse;
 import com.example.message.response.ResponseMessage;
-import com.example.model.Role;
-import com.example.model.RoleName;
-import com.example.model.User;
+import com.example.entity.Role;
+import com.example.entity.RoleName;
+import com.example.entity.User;
 import com.example.security.jwt.JwtProvider;
 
 @CrossOrigin(origins = "*", allowCredentials = "true", maxAge = 3600)

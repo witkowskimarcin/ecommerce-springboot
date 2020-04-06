@@ -1,17 +1,17 @@
-# Project Title
+## E-commerce application
 
-Shop application
+E-commerce shop Rest API.
+
+Angular Frontend: https://github.com/witkowskimarcin/ecommerce-angular
 
 ## Screenshots
 
 ![Screenshot](ss1.png)
-![Screenshot](ss2.png)
-![Screenshot](ss3.png)
 
 ### Built With
 
-* Spring-Boot 2.0.5
+* Spring-Boot
 * Spring REST
 * Spring JPA
 * Spring Security
-* VueJS
+* Angular (frontend)

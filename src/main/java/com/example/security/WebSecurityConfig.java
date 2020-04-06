@@ -2,6 +2,7 @@ package com.example.security;
 
 import com.example.security.jwt.JwtAuthEntryPoint;
 import com.example.security.services.UserDetailsServiceImpl;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,24 +25,29 @@ import com.example.security.jwt.JwtAuthTokenFilter;
 		prePostEnabled = true
 )
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    private JwtAuthEntryPoint unauthorizedHandler;
+//    @Autowired
+//    UserDetailsServiceImpl userDetailsService;
+//
+//    @Autowired
+//    private JwtAuthEntryPoint unauthorizedHandler;
+//
+//    @Bean
+//    public JwtAuthTokenFilter authenticationJwtTokenFilter() {
+//        return new JwtAuthTokenFilter();
+//    }
 
     @Bean
-    public JwtAuthTokenFilter authenticationJwtTokenFilter() {
-        return new JwtAuthTokenFilter();
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
-    }
-
+//    @Override
+//    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+//        authenticationManagerBuilder
+//                .userDetailsService(userDetailsService)
+//                .passwordEncoder(passwordEncoder());
+//    }
+//
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -58,18 +64,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors().and().csrf().disable().
                 authorizeRequests()
-                .antMatchers("/api/auth/**","/rest/**","/h2","/h2/**","/admin/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and()
-                .sessionManagement().maximumSessions(2);
+                .antMatchers("/api/auth/**","/rest/**","/h2","/h2/**","/admin/**", "/panel/**").permitAll()
+                .anyRequest().authenticated();
+//                .and()
+//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and()
+//                .sessionManagement().maximumSessions(2);
+
                 //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         // bez tego panel h2 nie dziala
         http.headers().frameOptions().disable();
-
     }
 }
