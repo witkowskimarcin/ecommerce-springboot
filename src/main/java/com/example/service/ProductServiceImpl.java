@@ -1,13 +1,12 @@
 package com.example.service;
 
 import com.example.entity.Image;
+import com.example.entity.Opportunity;
 import com.example.entity.Product;
 import com.example.entity.Subcategory;
-import com.example.model.CategoryModel;
-import com.example.model.ImageModel;
-import com.example.model.ProductModel;
-import com.example.model.SubcategoryModel;
+import com.example.model.*;
 import com.example.repository.ImageRepository;
+import com.example.repository.OpportunityRepository;
 import com.example.repository.ProductRepository;
 import com.example.repository.SubcategoryRepository;
 import org.slf4j.Logger;
@@ -19,19 +18,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceImpl implements ProductService
+public class ProductServiceImpl implements ProductService, OpportunityService
 {
     private ProductRepository productRepository;
     private SubcategoryRepository subcategoryRepository;
     private ImageRepository imageRepository;
+    private OpportunityRepository opportunityRepository;
     private Mappers mappers;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public ProductServiceImpl(ProductRepository productRepository, SubcategoryRepository subcategoryRepository, ImageRepository imageRepository, Mappers mappers)
+    public ProductServiceImpl(ProductRepository productRepository, SubcategoryRepository subcategoryRepository, ImageRepository imageRepository, OpportunityRepository opportunityRepository, Mappers mappers)
     {
         this.productRepository = productRepository;
         this.subcategoryRepository = subcategoryRepository;
         this.imageRepository = imageRepository;
+        this.opportunityRepository = opportunityRepository;
         this.mappers = mappers;
     }
 
@@ -159,5 +160,30 @@ public class ProductServiceImpl implements ProductService
         Image image = new Image();
         image.setImageBase64(i.getImage());
         return image;
+    }
+
+    @Override
+    public OpportunityModel getOpportunity()
+    {
+        List<Opportunity> opps = opportunityRepository.findAll();
+        if (opps.size()<=0) throw new RuntimeException("Opportunity does not exist");
+        OpportunityModel o = mappers.mapOpportunityEntityToModel(opps.get(0));
+        o.setProduct(prepareProductModel(opps.get(0).getProduct()));
+        return o;
+    }
+
+    @Override
+    public void setOpportunity(OpportunityModel opportunity)
+    {
+        opportunityRepository.deleteAll();
+        opportunityRepository.save(mappers.mapOpportunityModelToEntity(opportunity));
+        logger.info("Set opportunity");
+    }
+
+    @Override
+    public void unsetOpportunity()
+    {
+        opportunityRepository.deleteAll();
+        logger.info("Unset opportunity");
     }
 }

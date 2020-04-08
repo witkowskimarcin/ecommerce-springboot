@@ -1,8 +1,5 @@
 package com.example.entity;
 
-import org.json.JSONPropertyIgnore;
-import org.json.JSONPropertyName;
-
 import javax.persistence.*;
 import java.util.Base64;
 

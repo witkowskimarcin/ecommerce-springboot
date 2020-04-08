@@ -10,7 +10,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/panel")
-public class AdminRestController
+public class AdminController
 {
 	private ImageService imageService;
 	private CategoryService categoryService;
@@ -21,7 +21,7 @@ public class AdminRestController
 	private OrderService orderService;
 	private OrderDetailService orderDetailService;
 
-	public AdminRestController(ProductService productService, ImageService imageService, CategoryService categoryService, SubcategoryService subcategoryService, PromotedProductService promotedProductService, OpportunityService opportunityService, OrderService orderService, OrderDetailService orderDetailService)
+	public AdminController(ProductService productService, ImageService imageService, CategoryService categoryService, SubcategoryService subcategoryService, PromotedProductService promotedProductService, OpportunityService opportunityService, OrderService orderService, OrderDetailService orderDetailService)
 	{
 		this.productService = productService;
 		this.imageService = imageService;

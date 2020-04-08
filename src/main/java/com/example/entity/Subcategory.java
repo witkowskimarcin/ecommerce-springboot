@@ -1,7 +1,6 @@
 package com.example.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.json.JSONPropertyIgnore;
 
 import java.util.List;
 
@@ -47,7 +46,6 @@ public class Subcategory {
 		this.name = name;
 	}
 
-	@JSONPropertyIgnore
 	@JsonIgnore
 	public Category getCategory() {
 		return category;
@@ -57,7 +55,6 @@ public class Subcategory {
 		this.category = category;
 	}
 
-	@JSONPropertyIgnore
 	public List<Product> getProducts() {
 		return products;
 	}

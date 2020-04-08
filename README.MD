@@ -6,7 +6,7 @@ Angular Frontend: https://github.com/witkowskimarcin/ecommerce-angular
 
 ## Screenshots
 
-![Screenshot](ss1.png)
+![Screenshot](1.jpg)
 
 ### Built With
 

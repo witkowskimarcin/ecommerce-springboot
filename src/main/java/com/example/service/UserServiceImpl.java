@@ -1,11 +1,15 @@
 package com.example.service;
 
+import com.example.model.CartModel;
+import com.example.model.SessionModel;
 import com.example.model.UserModel;
 import com.example.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpSession;
 
 @Service
 public class UserServiceImpl implements UserService
@@ -57,5 +61,16 @@ public class UserServiceImpl implements UserService
     public UserModel getCurrentUser()
     {
         return findByUsername(getCurrentUserName());
+    }
+
+    @Override
+    public SessionModel logged(HttpSession session)
+    {
+        SessionModel sessionModel = new SessionModel();
+        UserModel currentUser = getCurrentUser();
+        CartModel cartModel = CartModel.getCartInSession(session);
+        sessionModel.setUser(currentUser);
+        sessionModel.setCartQuantity(cartModel.getQuantity());
+        return sessionModel;
     }
 }
