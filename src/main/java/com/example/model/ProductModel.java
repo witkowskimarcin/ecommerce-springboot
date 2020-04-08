@@ -28,7 +28,6 @@ public class ProductModel {
 	@NotNull
 	private List<ImageModel> images;
 
-	@JsonIgnore
     private SubcategoryModel subcategory;
 
 	@NotNull

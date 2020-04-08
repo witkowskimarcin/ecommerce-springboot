@@ -28,6 +28,7 @@ public class SubcategoryModel {
 
     @JsonIgnore
     private CategoryModel category;
-    
+
+    @JsonIgnore
     private List<ProductModel> products;
 }

@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 
 @RestController
-@RequestMapping("/rest")
+@RequestMapping("/")
 @CrossOrigin(origins = "*", allowCredentials = "true", maxAge = 3600)
 public class MainRestController {
 
@@ -106,19 +106,44 @@ public class MainRestController {
 		return new ResponseEntity<>(sessionModel, HttpStatus.OK);
 	}
 
+	// ====================== SUBKATEGORY
+
+	@GetMapping("/subcategory/{sid}")
+	public ResponseEntity getSubcategory(@PathVariable(value = "sid", required=true) Long sid) {
+
+		return new ResponseEntity(subcategoryService.getSubcategoryById(sid), HttpStatus.OK);
+	}
+
+	// =======================
+
 	// --------------------------------------
 	// PRODUKTY
 	// --------------------------------------
 
-	@GetMapping(value="/subcatgory/{sid}/products", produces = "application/json")
+	@GetMapping(value="/subcategory/{sid}/products", produces = "application/json")
 	public ResponseEntity<List<ProductModel>> getProductsBySubcategoryId(@PathVariable(value = "sid") Long id) {
 		return new ResponseEntity<>(productService.getProductsBySubcategoryId(id), HttpStatus.OK);
 	}
 
+	@GetMapping(value="/subcategory/{sid}/category", produces = "application/json")
+	public ResponseEntity<CategoryModel> getCategoryBySubcategoryId(@PathVariable(value = "sid") Long id) {
+		return new ResponseEntity<>(subcategoryService.getCategoryBySubcategoryId(id), HttpStatus.OK);
+	}
+
 	@GetMapping(value="/product/{id}", produces = "application/json")
-    public ResponseEntity<ProductModel> getProductById(@PathVariable Long id) {
-        return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
-    }
+	public ResponseEntity<ProductModel> getProductById(@PathVariable Long id) {
+		return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
+	}
+
+	@GetMapping(value="/product/{id}/category", produces = "application/json")
+	public ResponseEntity<CategoryModel> getCatProductById(@PathVariable Long id) {
+		return new ResponseEntity<>(productService.getCategoryOfProduct(id), HttpStatus.OK);
+	}
+
+	@GetMapping(value="/product/{id}/subcategory", produces = "application/json")
+	public ResponseEntity<SubcategoryModel> getSubcategoryOfProduct(@PathVariable Long id) {
+		return new ResponseEntity<>(productService.getSubcategoryOfProduct(id), HttpStatus.OK);
+	}
 
 
 	// --------------------------------------
@@ -135,28 +160,28 @@ public class MainRestController {
 		return new ResponseEntity(cartService.getCart(), HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/cart/product/{id}/add", produces = "application/json")
+	@PutMapping(value = "/cart/product/{id}/add", produces = "application/json")
 	public ResponseEntity addProductToCart(@PathVariable(value = "id", required=true) Long pid) {
 
 		cartService.addProductToCart(pid);
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = { "/cart/product/{id}/plus" }, method = RequestMethod.GET)
+	@PutMapping(value = { "/cart/product/{id}/plus" })
 	public ResponseEntity cartPlus(@PathVariable(value = "id", required=true) Long id) {
 
 		cartService.incrementAmountOfProduct(id);
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = { "/cart/product/{id}/minus" }, method = RequestMethod.GET)
+	@PutMapping(value = { "/cart/product/{id}/minus" })
 	public ResponseEntity cartMinus(@PathVariable(value = "id", required=true) Long id) {
 
 		cartService.decrementAmountOfProduct(id);
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@GetMapping("/cart/clear")
+	@DeleteMapping("/cart/clear")
 	public ResponseEntity removeCart() {
 
 		cartService.clearCart();

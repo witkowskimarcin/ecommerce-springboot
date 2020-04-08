@@ -36,17 +36,6 @@ public class AdminRestController
 	//--------------------------------
 	// Categories
 	//--------------------------------
-	
-	@GetMapping("/admin/categories")
-	public ResponseEntity getAllCategories() {
-
-		return new ResponseEntity(categoryService.getAllCategories(), HttpStatus.OK);
-	}
-	
-	@GetMapping("/admin/category/{cid}")
-	public ResponseEntity getCategory(@PathVariable(value = "cid", required=true) Long id) {
-		return new ResponseEntity(categoryService.getCategoryById(id), HttpStatus.OK);
-	}
 
 	@PostMapping("/admin/category/add")
 	public ResponseEntity addCategory(@Valid @RequestBody CategoryModel category) {
@@ -74,18 +63,6 @@ public class AdminRestController
 	// Subategories
 	//--------------------------------
 
-	@GetMapping("/admin/category/{cid}/subcategories")
-	public ResponseEntity getAllSubcategoriesByCategoryId(@PathVariable(value = "cid", required=true) Long id) {
-
-		return new ResponseEntity(subcategoryService.getAllSubcategoriesByCategoryId(id), HttpStatus.OK);
-	}
-
-	@GetMapping("/admin/subcategory/{sid}")
-	public ResponseEntity getSubcategory(@PathVariable(value = "sid", required=true) Long sid) {
-
-		return new ResponseEntity(subcategoryService.getSubcategoryById(sid), HttpStatus.OK);
-	}
-
 	@PostMapping("/admin/category/{cid}/subcategory/add")
 	public ResponseEntity addSubcategory(@PathVariable(value = "cid", required=true) Long id, @Valid @RequestBody SubcategoryModel subcategory) {
 		subcategoryService.addSubcategory(id, subcategory);
@@ -111,16 +88,6 @@ public class AdminRestController
 	//--------------------------------
 	// Products 
 	//--------------------------------
-
-	@GetMapping("/admin/subcategory/{sid}/products")
-	public ResponseEntity getAllProductsBySubcategoryId(@PathVariable(value = "sid", required=true) Long id) {
-		return new ResponseEntity(productService.getProductsBySubcategoryId(id), HttpStatus.OK);
-	}
-
-	@GetMapping("/admin/product/{pid}")
-	public ResponseEntity getProduct(@PathVariable(value = "pid", required=true) Long id) {
-		return new ResponseEntity(productService.getProductById(id), HttpStatus.OK);
-	}
 
 	@PostMapping("/admin/subcategory/{sid}/product/add")
 	public ResponseEntity addProduct(@PathVariable(value = "sid", required=true) Long id, @Valid @RequestBody ProductModel product) {
@@ -148,14 +115,9 @@ public class AdminRestController
 	// PromotedProducts
 	//--------------------------------
 
-	@GetMapping("/admin/promotedproducts")
-	public ResponseEntity promotedProducts() {
-		return new ResponseEntity(promotedProductService.getAll(), HttpStatus.OK);
-	}
-
-	@PostMapping("/admin/promotedproduct/add")
-	public ResponseEntity promotedProductsAdd(@Valid @RequestBody PromotedProductModel pp) {
-		promotedProductService.addPromotedProduct(pp);
+	@PostMapping("/admin/promotedproduct/product/{id}/add")
+	public ResponseEntity promotedProductsAdd(@PathVariable(value = "id", required=true) Long id) {
+		promotedProductService.addPromotedProduct(id);
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
@@ -173,11 +135,6 @@ public class AdminRestController
 	// MainPromotion
 	//--------------------------------
 
-	@GetMapping("/admin/opportunity")
-	public ResponseEntity getOpportunity() {
-
-		return new ResponseEntity(opportunityService.getOpportunity(),HttpStatus.OK);
-	}
 
 	@PostMapping("/admin/opportunity/set")
 	public ResponseEntity setOpportunity(@Valid @RequestBody OpportunityModel opportunity) {

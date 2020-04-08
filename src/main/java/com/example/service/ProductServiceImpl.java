@@ -3,8 +3,10 @@ package com.example.service;
 import com.example.entity.Image;
 import com.example.entity.Product;
 import com.example.entity.Subcategory;
+import com.example.model.CategoryModel;
 import com.example.model.ImageModel;
 import com.example.model.ProductModel;
+import com.example.model.SubcategoryModel;
 import com.example.repository.ImageRepository;
 import com.example.repository.ProductRepository;
 import com.example.repository.SubcategoryRepository;
@@ -45,6 +47,13 @@ public class ProductServiceImpl implements ProductService
         return product;
     }
 
+    public ProductModel prepareProductModel(Product p){
+        ProductModel product = mappers.mapProductEntityToModel(p);
+        List<ImageModel> images = p.getImages().stream().map(this::prepareImageModel).collect(Collectors.toList());
+        product.setImages(images);
+        return product;
+    }
+
     public ImageModel prepareImageModel(Image i){
         ImageModel image = new ImageModel();
         image.setId(i.getId());
@@ -55,10 +64,12 @@ public class ProductServiceImpl implements ProductService
     @Override
     public List<ProductModel> getProductsBySubcategoryId(Long id)
     {
-        return productRepository
-                .findAll()
+        List<Product> products = productRepository
+                .findAllBySubcategory(subcategoryRepository.findById(id).orElseThrow(
+                        ()->new RuntimeException("Subcategory id: "+id+" does no exist")));
+        return products
                 .stream()
-                .map(mappers::mapProductEntityToModel)
+                .map(this::prepareProductModel)
                 .collect(Collectors.toList());
     }
 
@@ -121,6 +132,27 @@ public class ProductServiceImpl implements ProductService
             img.setImageBase64(images.get(i).getImage());
         }
         return imageRepository.saveAll(imgs);
+    }
+
+    @Override
+    public CategoryModel getCategoryOfProduct(Long id)
+    {
+        return mappers
+                .mapCategoryEntityToModel(productRepository
+                .findById(id)
+                .orElseThrow(()->new RuntimeException("Product id: "+id+" does not exist"))
+                .getSubcategory()
+                .getCategory());
+    }
+
+    @Override
+    public SubcategoryModel getSubcategoryOfProduct(Long id)
+    {
+        return mappers
+                .mapSubcategoryEntityToModel(productRepository
+                        .findById(id)
+                        .orElseThrow(()->new RuntimeException("Product id: "+id+" does not exist"))
+                        .getSubcategory());
     }
 
     public Image prepareImage(ImageModel i){

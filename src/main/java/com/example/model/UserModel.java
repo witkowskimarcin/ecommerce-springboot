@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.NaturalId;
 
@@ -29,6 +30,7 @@ public class UserModel{
 
     @NotBlank
     @Size(min=6, max = 100)
+    @JsonIgnore
     private String password;
 
     private Set<RoleModel> roles = new HashSet<>();

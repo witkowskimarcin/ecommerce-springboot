@@ -1,7 +1,11 @@
 package com.example.service;
 
-import com.example.model.ProductModel;
+import com.example.entity.Image;
+import com.example.entity.Product;
+import com.example.entity.PromotedProduct;
+import com.example.model.ImageModel;
 import com.example.model.PromotedProductModel;
+import com.example.repository.ProductRepository;
 import com.example.repository.PromotedProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,20 +18,26 @@ import java.util.stream.Collectors;
 public class PromotedProductServiceImpl implements PromotedProductService
 {
     private PromotedProductRepository promotedProductRepository;
+    private ProductRepository productRepository;
     private Mappers mappers;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public PromotedProductServiceImpl(PromotedProductRepository promotedProductRepository, Mappers mappers)
+    public PromotedProductServiceImpl(PromotedProductRepository promotedProductRepository, ProductRepository productRepository, Mappers mappers)
     {
         this.promotedProductRepository = promotedProductRepository;
+        this.productRepository = productRepository;
         this.mappers = mappers;
     }
 
     @Override
-    public void addPromotedProduct(PromotedProductModel pp)
+    public void addPromotedProduct(Long id)
     {
-        promotedProductRepository.save(mappers.mapPromotedProductModelToEntity(pp));
-        logger.info("addPromotedProduct");
+        Product p = productRepository.findById(id).orElseThrow(
+                ()->new RuntimeException("Product id: "+id+" does not exist" ));
+        PromotedProduct pp = new PromotedProduct();
+        pp.setProduct(p);
+        promotedProductRepository.save(pp);
+        logger.info("addPromotedProduct id: "+pp.getProduct().getId());
     }
 
     @Override
@@ -50,6 +60,20 @@ public class PromotedProductServiceImpl implements PromotedProductService
         return promotedProductRepository
                 .findAll()
                 .stream()
-                .map(mappers::mapPromotedProductEntityToModel).collect(Collectors.toList());
+                .map(this::preparePromotedProductModel).collect(Collectors.toList());
+    }
+
+    private PromotedProductModel preparePromotedProductModel(PromotedProduct pro){
+        PromotedProductModel pp = mappers.mapPromotedProductEntityToModel(pro);
+        List<ImageModel> images = pro.getProduct().getImages().stream().map(this::prepareImageModel).collect(Collectors.toList());
+        pp.getProduct().setImages(images);
+        return pp;
+    }
+
+    private ImageModel prepareImageModel(Image i){
+        ImageModel image = new ImageModel();
+        image.setId(i.getId());
+        image.setImage(i.generateBase64Image());
+        return image;
     }
 }

@@ -1,10 +1,13 @@
 package com.example.service;
 
+import com.example.entity.Opportunity;
 import com.example.model.OpportunityModel;
 import com.example.repository.OpportunityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class OpportunityServiceImpl implements OpportunityService
@@ -22,7 +25,9 @@ public class OpportunityServiceImpl implements OpportunityService
     @Override
     public OpportunityModel getOpportunity()
     {
-        return mappers.mapOpportunityEntityToModel(opportunityRepository.findAll().get(0));
+        List<Opportunity> opps = opportunityRepository.findAll();
+        if (opps.size()<=0) throw new RuntimeException("Opportunity does not exist");
+        return mappers.mapOpportunityEntityToModel(opps.get(0));
     }
 
     @Override

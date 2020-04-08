@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.entity.Category;
 import com.example.entity.Subcategory;
+import com.example.model.CategoryModel;
 import com.example.model.SubcategoryModel;
 import com.example.repository.CategoryRepository;
 import com.example.repository.SubcategoryRepository;
@@ -76,5 +77,14 @@ public class SubcategoryServiceImpl implements SubcategoryService
     {
         subcategoryRepository.deleteById(id);
         logger.info("Remove subcategory id: "+id);
+    }
+
+    @Override
+    public CategoryModel getCategoryBySubcategoryId(Long id)
+    {
+        return mappers.mapCategoryEntityToModel(subcategoryRepository
+                .findById(id)
+                .orElseThrow(()->new RuntimeException("Subcategory id: "+id+" does not exist"))
+                .getCategory());
     }
 }

@@ -31,7 +31,7 @@ public class Image {
 
 //    @JSONPropertyName("image")
     public String generateBase64Image() {
-        return Base64.getEncoder().encodeToString(image);
+        return Base64.getEncoder().encodeToString(this.image);
     }
 
 //    @JSONPropertyName("image")

@@ -2,8 +2,10 @@ package com.example.service;
 
 import com.example.entity.Image;
 import com.example.entity.Product;
+import com.example.model.CategoryModel;
 import com.example.model.ImageModel;
 import com.example.model.ProductModel;
+import com.example.model.SubcategoryModel;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ public interface ProductService
     void removeProduct(Long id);
     Image saveImage(ImageModel image);
     List<Image> saveImages(List<ImageModel> images);
+    CategoryModel getCategoryOfProduct(Long id);
+    SubcategoryModel getSubcategoryOfProduct(Long id);
 }
