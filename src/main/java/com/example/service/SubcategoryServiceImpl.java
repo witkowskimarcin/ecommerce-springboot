@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.entity.Category;
 import com.example.entity.Subcategory;
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.CategoryModel;
 import com.example.model.SubcategoryModel;
 import com.example.repository.CategoryRepository;
@@ -33,7 +34,7 @@ public class SubcategoryServiceImpl implements SubcategoryService
     {
         return categoryRepository
                 .findById(id)
-                .orElseThrow(()->new RuntimeException("Category id: "+id+" does not exist"))
+                .orElseThrow(()->new ResourceNotFoundException("Category id: "+id+" does not exist"))
                 .getSubcategories()
                 .stream()
                 .map(mappers::mapSubcategoryEntityToModel)
@@ -45,13 +46,13 @@ public class SubcategoryServiceImpl implements SubcategoryService
     {
         return mappers.mapSubcategoryEntityToModel(subcategoryRepository
                 .findById(id)
-                .orElseThrow(()->new RuntimeException("Subcategory id: "+id+" does not exist")));
+                .orElseThrow(()->new ResourceNotFoundException("Subcategory id: "+id+" does not exist")));
     }
 
     @Override
     public void addSubcategory(Long id, SubcategoryModel subcategory)
     {
-        Category c = categoryRepository.findById(id).orElseThrow(()->new RuntimeException("Category id: "+id+" does not exist"));
+        Category c = categoryRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Category id: "+id+" does not exist"));
         Subcategory s = mappers.mapSubcategoryModelToEntity(subcategory);
         s.setCategory(c);
         subcategoryRepository.save(s);
@@ -65,7 +66,7 @@ public class SubcategoryServiceImpl implements SubcategoryService
     {
         Subcategory s = subcategoryRepository
                 .findById(id)
-                .orElseThrow(()->new RuntimeException("Subcategory id: "+id+" does not exist"));
+                .orElseThrow(()->new ResourceNotFoundException("Subcategory id: "+id+" does not exist"));
 
         s.setName(subcategory.getName());
         subcategoryRepository.save(s);
@@ -84,7 +85,7 @@ public class SubcategoryServiceImpl implements SubcategoryService
     {
         return mappers.mapCategoryEntityToModel(subcategoryRepository
                 .findById(id)
-                .orElseThrow(()->new RuntimeException("Subcategory id: "+id+" does not exist"))
+                .orElseThrow(()->new ResourceNotFoundException("Subcategory id: "+id+" does not exist"))
                 .getCategory());
     }
 }

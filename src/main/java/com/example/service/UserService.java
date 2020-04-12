@@ -15,4 +15,5 @@ public interface UserService
     String getCurrentUserName();
     UserModel getCurrentUser();
     SessionModel logged(HttpSession session);
+    String getSessionId();
 }

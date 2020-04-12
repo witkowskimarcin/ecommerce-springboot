@@ -16,7 +16,6 @@ public class ProductModel {
 	@Size(min=3, max = 50)
 	private String name;
 
-	@Size(max = 5000)
 	private String description;
 
 	@NotNull

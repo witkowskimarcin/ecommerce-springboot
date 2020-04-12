@@ -18,17 +18,6 @@ import java.util.Map;
 @CrossOrigin(origins = "*", allowCredentials = "true", maxAge = 3600)
 public class MainController
 {
-
-	@Autowired private ProductRepository productRepository;
-	@Autowired private CategoryRepository categoryRepository;
-	@Autowired private SubcategoryRepository subcategoryRepository;
-	@Autowired private PromotedProductRepository promotedProductRepository;
-	@Autowired private OpportunityRepository opportunityRepository;
-	@Autowired private OrderRepository orderRepository;
-	@Autowired private OrderDetailRepository orderDetailRepository;
-	@Autowired private UserRepository userRepository;
-	@Autowired private HttpSession session;
-
 	private UserService userService;
 	private ImageService imageService;
 	private CategoryService categoryService;
@@ -54,13 +43,32 @@ public class MainController
 		this.cartService = cartService;
 	}
 
+	// --------------------------------------
+	// USER
+	// --------------------------------------
+
 	@GetMapping(value="/getsessionid")
 	public ResponseEntity getSessionId(){
 
 		Map<String,Object> map = new HashMap<>();
-		map.put("JSESSIONID",session.getId());
+		map.put("JSESSIONID",userService.getSessionId());
 		return new ResponseEntity(map, HttpStatus.OK);
 	}
+
+	@GetMapping(value="/logged")
+	public ResponseEntity<SessionModel> logged(HttpSession session){
+
+		SessionModel s = userService.logged(session);
+		return new ResponseEntity<>(s, HttpStatus.OK);
+	}
+
+	// --------------------------------------
+	// !USER
+	// --------------------------------------
+
+	// --------------------------------------
+	// CATEGORY
+	// --------------------------------------
 
 	@GetMapping(value="/categories")
 	public ResponseEntity<List<CategoryModel>> categories(){
@@ -72,29 +80,13 @@ public class MainController
 		return new ResponseEntity<>(categoryService.getCategoryById(id), HttpStatus.OK);
 	}
 
-	@GetMapping(value="/category/{id}/subcategories")
-	public ResponseEntity<List<SubcategoryModel>> subcategories(@PathVariable(value = "id") Long id){
-		return new ResponseEntity<>(subcategoryService.getAllSubcategoriesByCategoryId(id), HttpStatus.OK);
-	}
+	// --------------------------------------
+	// !CATEGORY
+	// --------------------------------------
 
-	@GetMapping(value="/opportunity")
-	public ResponseEntity<OpportunityModel> opportunity(){
-		return new ResponseEntity<>(opportunityService.getOpportunity(), HttpStatus.OK);
-	}
-
-	@GetMapping(value="/promotedproducts")
-	public ResponseEntity<List<PromotedProductModel>> promotedproducts(){
-		return new ResponseEntity<>(promotedProductService.getAll(), HttpStatus.OK);
-	}
-
-	@GetMapping(value="/logged")
-	public ResponseEntity<SessionModel> logged(HttpSession session){
-
-		SessionModel s = userService.logged(session);
-		return new ResponseEntity<>(s, HttpStatus.OK);
-	}
-
-	// ====================== SUBKATEGORY
+	// --------------------------------------
+	// SUBCATEGORY
+	// --------------------------------------
 
 	@GetMapping("/subcategory/{sid}")
 	public ResponseEntity getSubcategory(@PathVariable(value = "sid", required=true) Long sid) {
@@ -102,10 +94,17 @@ public class MainController
 		return new ResponseEntity(subcategoryService.getSubcategoryById(sid), HttpStatus.OK);
 	}
 
-	// =======================
+	@GetMapping(value="/category/{id}/subcategories")
+	public ResponseEntity<List<SubcategoryModel>> subcategories(@PathVariable(value = "id") Long id){
+		return new ResponseEntity<>(subcategoryService.getAllSubcategoriesByCategoryId(id), HttpStatus.OK);
+	}
 
 	// --------------------------------------
-	// PRODUKTY
+	// !SUBCATEGORY
+	// --------------------------------------
+
+	// --------------------------------------
+	// PRODUCTS
 	// --------------------------------------
 
 	@GetMapping(value="/subcategory/{sid}/products", produces = "application/json")
@@ -124,7 +123,7 @@ public class MainController
 	}
 
 	@GetMapping(value="/product/{id}/category", produces = "application/json")
-	public ResponseEntity<CategoryModel> getCatProductById(@PathVariable Long id) {
+	public ResponseEntity<CategoryModel> getCategoryOfProduct(@PathVariable Long id) {
 		return new ResponseEntity<>(productService.getCategoryOfProduct(id), HttpStatus.OK);
 	}
 
@@ -133,59 +132,69 @@ public class MainController
 		return new ResponseEntity<>(productService.getSubcategoryOfProduct(id), HttpStatus.OK);
 	}
 
-
-	// --------------------------------------
-	// !PRODUKTY
-	// --------------------------------------
-
-	// --------------------------------------
-	// KOSZYK
-	// --------------------------------------
-
-	@GetMapping(value="/cart", produces = "application/json")
-	public ResponseEntity getCart() {
-
-		return new ResponseEntity(cartService.getCart(), HttpStatus.OK);
+	@GetMapping(value="/promotedproducts")
+	public ResponseEntity<List<PromotedProductModel>> promotedproducts(){
+		return new ResponseEntity<>(promotedProductService.getAll(), HttpStatus.OK);
 	}
 
-	@PutMapping(value = "/cart/product/{id}/add", produces = "application/json")
-	public ResponseEntity addProductToCart(@PathVariable(value = "id", required=true) Long pid) {
-
-		cartService.addProductToCart(pid);
-		return new ResponseEntity(HttpStatus.OK);
-	}
-
-	@PutMapping(value = { "/cart/product/{id}/plus" })
-	public ResponseEntity cartPlus(@PathVariable(value = "id", required=true) Long id) {
-
-		cartService.incrementAmountOfProduct(id);
-		return new ResponseEntity(HttpStatus.OK);
-	}
-
-	@PutMapping(value = { "/cart/product/{id}/minus" })
-	public ResponseEntity cartMinus(@PathVariable(value = "id", required=true) Long id) {
-
-		cartService.decrementAmountOfProduct(id);
-		return new ResponseEntity(HttpStatus.OK);
-	}
-
-	@DeleteMapping("/cart/clear")
-	public ResponseEntity removeCart() {
-
-		cartService.clearCart();
-		return new ResponseEntity(HttpStatus.OK);
+	@GetMapping(value="/opportunity")
+	public ResponseEntity<OpportunityModel> opportunity(){
+		return new ResponseEntity<>(opportunityService.getOpportunity(), HttpStatus.OK);
 	}
 
 	// --------------------------------------
-	// !KOSZYK
+	// !PRODUCTS
 	// --------------------------------------
 
 	// --------------------------------------
-	// ZAMOWIENIE
+	// CART
+	// --------------------------------------
+
+//	@GetMapping(value="/cart", produces = "application/json")
+//	public ResponseEntity getCart() {
+//
+//		return new ResponseEntity(cartService.getCart(), HttpStatus.OK);
+//	}
+//
+//	@PutMapping(value = "/cart/product/{id}/add", produces = "application/json")
+//	public ResponseEntity addProductToCart(@PathVariable(value = "id", required=true) Long pid) {
+//
+//		cartService.addProductToCart(pid);
+//		return new ResponseEntity(HttpStatus.OK);
+//	}
+//
+//	@PutMapping(value = { "/cart/product/{id}/plus" })
+//	public ResponseEntity cartPlus(@PathVariable(value = "id", required=true) Long id) {
+//
+//		cartService.incrementAmountOfProduct(id);
+//		return new ResponseEntity(HttpStatus.OK);
+//	}
+//
+//	@PutMapping(value = { "/cart/product/{id}/minus" })
+//	public ResponseEntity cartMinus(@PathVariable(value = "id", required=true) Long id) {
+//
+//		cartService.decrementAmountOfProduct(id);
+//		return new ResponseEntity(HttpStatus.OK);
+//	}
+//
+//	@DeleteMapping("/cart/clear")
+//	public ResponseEntity removeCart() {
+//
+//		cartService.clearCart();
+//		return new ResponseEntity(HttpStatus.OK);
+//	}
+
+	// --------------------------------------
+	// !CART
 	// --------------------------------------
 
 	// --------------------------------------
-	// !ZAMOWIENIE
+	// ORDER
 	// --------------------------------------
 
+	//TODO
+
+	// --------------------------------------
+	// !ORDER
+	// --------------------------------------
 }

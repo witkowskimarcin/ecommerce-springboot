@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.entity.Image;
 import com.example.entity.Product;
 import com.example.entity.PromotedProduct;
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.ImageModel;
 import com.example.model.PromotedProductModel;
 import com.example.repository.ProductRepository;
@@ -33,7 +34,7 @@ public class PromotedProductServiceImpl implements PromotedProductService
     public void addPromotedProduct(Long id)
     {
         Product p = productRepository.findById(id).orElseThrow(
-                ()->new RuntimeException("Product id: "+id+" does not exist" ));
+                ()->new ResourceNotFoundException("Product id: "+id+" does not exist" ));
         PromotedProduct pp = new PromotedProduct();
         pp.setProduct(p);
         promotedProductRepository.save(pp);

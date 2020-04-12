@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.CartModel;
 import com.example.model.SessionModel;
 import com.example.model.UserModel;
@@ -16,12 +17,14 @@ public class UserServiceImpl implements UserService
 {
 
     private UserRepository userRepository;
+    private HttpSession session;
     private Mappers mappers;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public UserServiceImpl(UserRepository userRepository, Mappers mappers)
+    public UserServiceImpl(UserRepository userRepository, HttpSession session, Mappers mappers)
     {
         this.userRepository = userRepository;
+        this.session = session;
         this.mappers = mappers;
     }
 
@@ -29,14 +32,14 @@ public class UserServiceImpl implements UserService
     public UserModel findByUsername(String username)
     {
         return mappers.mapUserEntityToModel(userRepository.findByUsername(username).orElseThrow(
-                ()->new RuntimeException("User username: "+username+" does not exist")));
+                ()->new ResourceNotFoundException("User username: "+username+" does not exist")));
     }
 
     @Override
     public UserModel findByEmail(String email)
     {
         return mappers.mapUserEntityToModel(userRepository.findByEmail(email).orElseThrow(
-                ()->new RuntimeException("User email: "+email+" does not exist")));
+                ()->new ResourceNotFoundException("User email: "+email+" does not exist")));
     }
 
     @Override
@@ -72,5 +75,11 @@ public class UserServiceImpl implements UserService
         sessionModel.setUser(currentUser);
         sessionModel.setCartQuantity(cartModel.getQuantity());
         return sessionModel;
+    }
+
+    @Override
+    public String getSessionId()
+    {
+        return session.getId();
     }
 }

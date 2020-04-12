@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.entity.Product;
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.CartModel;
 import com.example.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class CartServiceImpl implements CartService
     {
         CartModel cartModel = CartModel.getCartInSession(session);
         cartModel.addProduct(productRepository.findById(id).orElseThrow(
-                ()->new RuntimeException("Product id: "+id+" does not exist")));
+                ()->new ResourceNotFoundException("Product id: "+id+" does not exist")));
         logger.info("Product id: "+id+" has been added to cart");
     }
 
@@ -44,7 +45,7 @@ public class CartServiceImpl implements CartService
     {
         CartModel cartModel = CartModel.getCartInSession(session);
         Product product = productRepository.findById(id).orElseThrow(
-                ()->new RuntimeException("Product id: "+id+" does not exist"));
+                ()->new ResourceNotFoundException("Product id: "+id+" does not exist"));
         cartModel.addProduct(product);
         logger.info("Product id: "+id+" has been incremented in cart");
     }
@@ -54,7 +55,7 @@ public class CartServiceImpl implements CartService
     {
         CartModel cartModel = CartModel.getCartInSession(session);
         Product product = productRepository.findById(id).orElseThrow(
-                ()->new RuntimeException("Product id: "+id+" does not exist"));
+                ()->new ResourceNotFoundException("Product id: "+id+" does not exist"));
         cartModel.removeProduct(product);
         logger.info("Product id: "+id+" has been incremented in cart");
     }

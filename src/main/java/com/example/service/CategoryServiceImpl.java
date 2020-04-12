@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.entity.Category;
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.CategoryModel;
 import com.example.repository.CategoryRepository;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService
     {
         return mappers.mapCategoryEntityToModel(categoryRepository
                 .findById(id)
-                .orElseThrow(()-> new RuntimeException("Category id: "+id+" does not exist")));
+                .orElseThrow(()-> new ResourceNotFoundException("Category id: "+id+" does not exist")));
     }
 
     @Override
@@ -52,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService
     public void editCategory(Long id, CategoryModel category)
     {
         Category c = categoryRepository.findById(id).orElseThrow(
-                ()->new RuntimeException("Category id: "+id+" does not exist"));
+                ()->new ResourceNotFoundException("Category id: "+id+" does not exist"));
         c.setName(category.getName());
         categoryRepository.save(c);
         logger.info("Category has benn edited");

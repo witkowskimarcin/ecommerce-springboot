@@ -33,14 +33,20 @@ import com.example.security.jwt.JwtProvider;
 @RequestMapping("/api/auth")
 public class AuthController
 {
+	private AuthenticationManager authenticationManager;
+	private UserRepository userRepository;
+	private RoleRepository roleRepository;
+	private PasswordEncoder encoder;
+	private JwtProvider jwtProvider;
 
-	@Autowired AuthenticationManager authenticationManager;
-	@Autowired
-	UserRepository userRepository;
-	@Autowired
-	RoleRepository roleRepository;
-	@Autowired PasswordEncoder encoder;
-	@Autowired JwtProvider jwtProvider;
+	public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, JwtProvider jwtProvider)
+	{
+		this.authenticationManager = authenticationManager;
+		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
+		this.encoder = encoder;
+		this.jwtProvider = jwtProvider;
+	}
 
 	@PostMapping(value="/signin",
 			consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,

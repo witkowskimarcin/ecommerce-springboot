@@ -4,6 +4,7 @@ import com.example.entity.Image;
 import com.example.entity.Opportunity;
 import com.example.entity.Product;
 import com.example.entity.Subcategory;
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.*;
 import com.example.repository.ImageRepository;
 import com.example.repository.OpportunityRepository;
@@ -40,7 +41,7 @@ public class ProductServiceImpl implements ProductService, OpportunityService
     public ProductModel getProductById(Long id)
     {
         Product p = productRepository.findById(id).orElseThrow(
-                ()->new RuntimeException("Product id: "+id+ " does not exist"));
+                ()->new ResourceNotFoundException("Product id: "+id+ " does not exist"));
         ProductModel product = mappers.mapProductEntityToModel(p);
         List<ImageModel> images = p.getImages().stream().map(this::prepareImageModel).collect(Collectors.toList());
         product.setImages(images);
@@ -67,7 +68,7 @@ public class ProductServiceImpl implements ProductService, OpportunityService
     {
         List<Product> products = productRepository
                 .findAllBySubcategory(subcategoryRepository.findById(id).orElseThrow(
-                        ()->new RuntimeException("Subcategory id: "+id+" does no exist")));
+                        ()->new ResourceNotFoundException("Subcategory id: "+id+" does no exist")));
         return products
                 .stream()
                 .map(this::prepareProductModel)
@@ -79,7 +80,7 @@ public class ProductServiceImpl implements ProductService, OpportunityService
     {
         logger.info("TUTAJ+ "+product.getImages().get(0).getImage());
         Subcategory s = subcategoryRepository.findById(id).orElseThrow(
-                ()->new RuntimeException("Subcategory id: "+id+" does no exist"));
+                ()->new ResourceNotFoundException("Subcategory id: "+id+" does no exist"));
         Product p = mappers.mapProductModelToEntity(product);
 //        List<Image> images = saveImages(product.getImages());
         List<Image> images = imageRepository.saveAll(product.getImages()
@@ -99,7 +100,7 @@ public class ProductServiceImpl implements ProductService, OpportunityService
     public void editProduct(ProductModel product)
     {
         Product p = productRepository.findById(product.getId()).orElseThrow(
-                ()->new RuntimeException("Product id: "+product.getId()+" does not exist"));
+                ()->new ResourceNotFoundException("Product id: "+product.getId()+" does not exist"));
         p.setQuantity(product.getQuantity());
         p.setDescription(product.getDescription());
         p.setName(product.getName());
@@ -141,7 +142,7 @@ public class ProductServiceImpl implements ProductService, OpportunityService
         return mappers
                 .mapCategoryEntityToModel(productRepository
                 .findById(id)
-                .orElseThrow(()->new RuntimeException("Product id: "+id+" does not exist"))
+                .orElseThrow(()->new ResourceNotFoundException("Product id: "+id+" does not exist"))
                 .getSubcategory()
                 .getCategory());
     }
@@ -152,7 +153,7 @@ public class ProductServiceImpl implements ProductService, OpportunityService
         return mappers
                 .mapSubcategoryEntityToModel(productRepository
                         .findById(id)
-                        .orElseThrow(()->new RuntimeException("Product id: "+id+" does not exist"))
+                        .orElseThrow(()->new ResourceNotFoundException("Product id: "+id+" does not exist"))
                         .getSubcategory());
     }
 
@@ -166,7 +167,7 @@ public class ProductServiceImpl implements ProductService, OpportunityService
     public OpportunityModel getOpportunity()
     {
         List<Opportunity> opps = opportunityRepository.findAll();
-        if (opps.size()<=0) throw new RuntimeException("Opportunity does not exist");
+        if (opps.size()<=0) throw new ResourceNotFoundException("Opportunity does not exist");
         OpportunityModel o = mappers.mapOpportunityEntityToModel(opps.get(0));
         o.setProduct(prepareProductModel(opps.get(0).getProduct()));
         return o;

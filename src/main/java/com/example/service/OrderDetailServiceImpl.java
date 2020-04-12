@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.ResourceNotFoundException;
 import com.example.model.OrderDetailModel;
 import com.example.repository.OrderDetailRepository;
 import com.example.repository.OrderRepository;
@@ -30,7 +31,7 @@ public class OrderDetailServiceImpl implements OrderDetailService
     {
         return orderRepository
                 .findById(id)
-                .orElseThrow(()-> new RuntimeException("OrderDetail id: "+id+" does not exist"))
+                .orElseThrow(()-> new ResourceNotFoundException("OrderDetail id: "+id+" does not exist"))
                 .getOrderDetails()
                 .stream()
                 .map(mappers::mapOrderDetailEntityToModel)
