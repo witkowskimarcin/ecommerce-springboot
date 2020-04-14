@@ -33,4 +33,6 @@ public class PromotedProduct {
 	public void setProduct(Product product) {
 		this.product = product;
 	}
+
+
 }

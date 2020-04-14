@@ -5,6 +5,7 @@ import com.example.model.CartModel;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -173,12 +174,23 @@ public class Order{
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
-	
-	
-	
-	
 
-//	public Map<Product, Integer> getProducts() {
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Order order = (Order) o;
+		return id == order.id;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(id);
+	}
+
+	//	public Map<Product, Integer> getProducts() {
 //		return products;
 //	}
 //

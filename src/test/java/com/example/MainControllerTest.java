@@ -23,15 +23,16 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class MainControllerTest
 {
-    @MockBean private UserServiceImpl userService;
-    @MockBean private ImageServiceImpl imageService;
-    @MockBean private CategoryServiceImpl categoryService;
-    @MockBean private SubcategoryServiceImpl subcategoryService;
-    @MockBean private ProductServiceImpl productService;
-    @MockBean private PromotedProductServiceImpl promotedProductService;
-    @MockBean private OrderServiceImpl orderService;
-    @MockBean private OrderDetailServiceImpl orderDetailService;
-    @MockBean private CartServiceImpl cartService;
+    @MockBean private UserService userService;
+    @MockBean private ImageService imageService;
+    @MockBean private CategoryService categoryService;
+    @MockBean private SubcategoryService subcategoryService;
+    @MockBean private ProductService productService;
+    @MockBean private PromotedProductService promotedProductService;
+    @MockBean private OrderService orderService;
+    @MockBean private OrderDetailService orderDetailService;
+    @MockBean private CartService cartService;
+    @MockBean private OpportunityService opportunityService;
     @Autowired private MainController mainController;
 
     @Test
@@ -74,7 +75,7 @@ public class MainControllerTest
         o.setQuantity(1);
         o.setProduct(null);
 
-        when(productService.getOpportunity()).thenReturn(o);
+        when(opportunityService.getOpportunity()).thenReturn(o);
         ResponseEntity<OpportunityModel> response = mainController.opportunity();
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(1l, response.getBody().getId());
@@ -86,7 +87,7 @@ public class MainControllerTest
         p.setId(1l);
         p.setProduct(null);
 
-        when(promotedProductService.getAll()).thenReturn(Arrays.asList(p));
+        when(promotedProductService.getAllPromotedProducts()).thenReturn(Arrays.asList(p));
         ResponseEntity<List<PromotedProductModel>> response = mainController.promotedproducts();
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(1, response.getBody().size());

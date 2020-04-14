@@ -3,6 +3,7 @@ package com.example.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,5 +62,20 @@ public class Subcategory {
 
 	public void setProducts(List<Product> products) {
 		this.products = products;
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Subcategory that = (Subcategory) o;
+		return id == that.id;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(id);
 	}
 }
