@@ -134,7 +134,7 @@ public class MainController
 
 	@GetMapping(value="/promotedproducts")
 	public ResponseEntity<List<PromotedProductModel>> promotedproducts(){
-		return new ResponseEntity<>(promotedProductService.getAll(), HttpStatus.OK);
+		return new ResponseEntity<>(promotedProductService.getAllPromotedProducts(), HttpStatus.OK);
 	}
 
 	@GetMapping(value="/opportunity")

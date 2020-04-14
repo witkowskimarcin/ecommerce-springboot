@@ -1,15 +1,9 @@
 package com.example.service;
 
-import com.example.entity.Image;
-import com.example.entity.Opportunity;
-import com.example.entity.Product;
-import com.example.entity.Subcategory;
+import com.example.entity.*;
 import com.example.exception.ResourceNotFoundException;
 import com.example.model.*;
-import com.example.repository.ImageRepository;
-import com.example.repository.OpportunityRepository;
-import com.example.repository.ProductRepository;
-import com.example.repository.SubcategoryRepository;
+import com.example.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,21 +13,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductServiceImpl implements ProductService, OpportunityService
+public class ProductServiceImpl implements ProductService, OpportunityService, PromotedProductService, ImageService
 {
     private ProductRepository productRepository;
     private SubcategoryRepository subcategoryRepository;
     private ImageRepository imageRepository;
     private OpportunityRepository opportunityRepository;
+    private PromotedProductRepository promotedProductRepository;
     private Mappers mappers;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public ProductServiceImpl(ProductRepository productRepository, SubcategoryRepository subcategoryRepository, ImageRepository imageRepository, OpportunityRepository opportunityRepository, Mappers mappers)
+    public ProductServiceImpl(ProductRepository productRepository, SubcategoryRepository subcategoryRepository, ImageRepository imageRepository, OpportunityRepository opportunityRepository, PromotedProductRepository promotedProductRepository, Mappers mappers)
     {
         this.productRepository = productRepository;
         this.subcategoryRepository = subcategoryRepository;
         this.imageRepository = imageRepository;
         this.opportunityRepository = opportunityRepository;
+        this.promotedProductRepository = promotedProductRepository;
         this.mappers = mappers;
     }
 
@@ -78,16 +74,13 @@ public class ProductServiceImpl implements ProductService, OpportunityService
     @Override
     public void addProduct(Long id, ProductModel product)
     {
-        logger.info("TUTAJ+ "+product.getImages().get(0).getImage());
         Subcategory s = subcategoryRepository.findById(id).orElseThrow(
                 ()->new ResourceNotFoundException("Subcategory id: "+id+" does no exist"));
         Product p = mappers.mapProductModelToEntity(product);
-//        List<Image> images = saveImages(product.getImages());
         List<Image> images = imageRepository.saveAll(product.getImages()
                 .stream()
                 .map(this::prepareImage)
                 .collect(Collectors.toList()));
-        logger.info(images.get(0).getId()+"");
         p.setImages(images);
         p.setSubcategory(s);
         productRepository.save(p);
@@ -186,5 +179,39 @@ public class ProductServiceImpl implements ProductService, OpportunityService
     {
         opportunityRepository.deleteAll();
         logger.info("Unset opportunity");
+    }
+
+    @Override
+    public void addPromotedProduct(Long id)
+    {
+        Product p = productRepository.findById(id).orElseThrow(
+                ()->new ResourceNotFoundException("Product id: "+id+" does not exist" ));
+        PromotedProduct pp = new PromotedProduct();
+        pp.setProduct(p);
+        promotedProductRepository.save(pp);
+        logger.info("addPromotedProduct id: "+pp.getProduct().getId());
+    }
+
+    @Override
+    public void removePromotedProduct(Long id)
+    {
+        promotedProductRepository.deleteById(id);
+        logger.info("removePromotedProduct id: "+id);
+    }
+
+    @Override
+    public List<PromotedProductModel> getAllPromotedProducts()
+    {
+        return promotedProductRepository
+                .findAll()
+                .stream()
+                .map(this::preparePromotedProductModel).collect(Collectors.toList());
+    }
+
+    private PromotedProductModel preparePromotedProductModel(PromotedProduct pro){
+        PromotedProductModel pp = mappers.mapPromotedProductEntityToModel(pro);
+        List<ImageModel> images = pro.getProduct().getImages().stream().map(this::prepareImageModel).collect(Collectors.toList());
+        pp.getProduct().setImages(images);
+        return pp;
     }
 }

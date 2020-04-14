@@ -8,6 +8,7 @@ import com.example.service.Mappers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,17 +18,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-//@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public class CategoryServiceTest
 {
     @MockBean private CategoryRepository categoryRepository;
-    @Autowired private Mappers mappers;
-
     @Autowired private CategoryService categoryService;
 
     @Test
@@ -39,8 +37,9 @@ public class CategoryServiceTest
 
     @Test
     public void getCategoryByIdTest(){
-        when(categoryRepository.findById(1L)).thenReturn(prepareCategoryEntity());
+        when(categoryRepository.findById(1L)).thenReturn(java.util.Optional.of(prepareCategoryEntity()));
         CategoryModel result = categoryService.getCategoryById(1L);
+        System.out.println(result.getId());
         assertEquals(1L, result.getId());
     }
 
@@ -48,18 +47,22 @@ public class CategoryServiceTest
     public void addCategoryTest(){
         categoryService.addCategory(prepareCategoryModel());
         verify(categoryRepository).save(prepareCategoryEntity());
+        atLeastOnce();
     }
 
     @Test
     public void editCategoryTest(){
+        when(categoryRepository.findById(1L)).thenReturn(java.util.Optional.of(prepareCategoryEntity()));
         categoryService.editCategory(1L, prepareCategoryModel());
         verify(categoryRepository).save(prepareCategoryEntity());
+        atLeastOnce();
     }
 
     @Test
     public void removeCategoryByIdTest(){
         categoryService.removeCategoryById(1L);
         verify(categoryRepository).deleteById(1L);
+        atLeastOnce();
     }
 
     private Category prepareCategoryEntity()
@@ -77,7 +80,6 @@ public class CategoryServiceTest
         c.setId(1L);
         c.setName("TestCategory");
         c.setSubcategories(null);
-//        return c;
-        return mappers.mapCategoryEntityToModel(prepareCategoryEntity());
+        return c;
     }
 }

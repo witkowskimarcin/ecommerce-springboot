@@ -8,6 +8,5 @@ public interface PromotedProductService
 {
     void addPromotedProduct(Long id);
     void removePromotedProduct(Long id);
-    void deleteById(long id);
-    List<PromotedProductModel> getAll();
+    List<PromotedProductModel> getAllPromotedProducts();
 }
