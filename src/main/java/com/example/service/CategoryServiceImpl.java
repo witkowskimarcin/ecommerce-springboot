@@ -46,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService
     public void addCategory(CategoryModel category)
     {
         categoryRepository.save(mappers.mapCategoryModelToEntity(category));
-        logger.info("Category has benn added");
+        logger.info("Category has been added");
     }
 
     @Override
@@ -56,13 +56,13 @@ public class CategoryServiceImpl implements CategoryService
                 ()->new ResourceNotFoundException("Category id: "+id+" does not exist"));
         c.setName(category.getName());
         categoryRepository.save(c);
-        logger.info("Category has benn edited");
+        logger.info("Category has been edited");
     }
 
     @Override
     public void removeCategoryById(Long id)
     {
         categoryRepository.deleteById(id);
-        logger.info("Category has benn removed");
+        logger.info("Category has been removed");
     }
 }
