@@ -15,15 +15,16 @@ import javax.servlet.http.HttpSession;
 @Service
 public class UserServiceImpl implements UserService
 {
-
     private UserRepository userRepository;
+    private CartService cartService;
     private HttpSession session;
     private Mappers mappers;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public UserServiceImpl(UserRepository userRepository, HttpSession session, Mappers mappers)
+    public UserServiceImpl(UserRepository userRepository, CartService cartService, HttpSession session, Mappers mappers)
     {
         this.userRepository = userRepository;
+        this.cartService = cartService;
         this.session = session;
         this.mappers = mappers;
     }
@@ -71,9 +72,8 @@ public class UserServiceImpl implements UserService
     {
         SessionModel sessionModel = new SessionModel();
         UserModel currentUser = getCurrentUser();
-        CartModel cartModel = CartModel.getCartInSession(session);
         sessionModel.setUser(currentUser);
-        sessionModel.setCartQuantity(cartModel.getQuantity());
+        sessionModel.setCartQuantity(cartService.getQuantity());
         return sessionModel;
     }
 
