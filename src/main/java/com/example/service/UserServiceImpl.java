@@ -1,16 +1,30 @@
 package com.example.service;
 
+import com.example.entity.Role;
+import com.example.entity.RoleName;
+import com.example.entity.User;
+import com.example.exception.EmailAlreadyExistsException;
 import com.example.exception.ResourceNotFoundException;
-import com.example.model.CartModel;
+import com.example.message.JwtResponse;
+import com.example.model.LoginForm;
 import com.example.model.SessionModel;
 import com.example.model.UserModel;
+import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
+import com.example.security.jwt.JwtProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService
@@ -20,13 +34,21 @@ public class UserServiceImpl implements UserService
     private HttpSession session;
     private Mappers mappers;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private RoleRepository roleRepository;
+    private PasswordEncoder encoder;
+    private AuthenticationManager authenticationManager;
+    private JwtProvider jwtProvider;
 
-    public UserServiceImpl(UserRepository userRepository, CartService cartService, HttpSession session, Mappers mappers)
+    public UserServiceImpl(UserRepository userRepository, CartService cartService, HttpSession session, Mappers mappers, RoleRepository roleRepository, PasswordEncoder encoder, AuthenticationManager authenticationManager, JwtProvider jwtProvider)
     {
         this.userRepository = userRepository;
         this.cartService = cartService;
         this.session = session;
         this.mappers = mappers;
+        this.roleRepository = roleRepository;
+        this.encoder = encoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtProvider = jwtProvider;
     }
 
     @Override
@@ -81,5 +103,38 @@ public class UserServiceImpl implements UserService
     public String getSessionId()
     {
         return session.getId();
+    }
+
+    @Override
+    public void register(UserModel userModel)
+    {
+        if (userRepository.existsByEmail(userModel.getEmail())) throw new EmailAlreadyExistsException(userModel.getEmail());
+        
+        User user = mappers.mapUserModelToEntity(userModel);
+        user.setActive(1);
+        user.setPassword(encoder.encode(userModel.getPassword()));
+        
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+        roles.add(userRole);
+        user.setRoles(roles);
+
+        logger.info("Register user successfully");
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public JwtResponse authenticateUser(LoginForm loginRequest)
+    {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = jwtProvider.generateJwtToken(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        return new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities());
     }
 }

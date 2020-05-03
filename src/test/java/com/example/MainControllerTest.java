@@ -1,6 +1,6 @@
 package com.example;
 
-import com.example.controller.rest.MainController;
+import com.example.controller.MainController;
 import com.example.model.*;
 import com.example.service.*;
 import org.junit.Test;
@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

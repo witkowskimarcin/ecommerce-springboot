@@ -1,4 +1,4 @@
-package com.example.controller.rest;
+package com.example.controller;
 
 import com.example.model.*;
 import com.example.service.*;

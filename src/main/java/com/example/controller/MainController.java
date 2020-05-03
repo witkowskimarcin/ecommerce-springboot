@@ -1,4 +1,4 @@
-package com.example.controller.rest;
+package com.example.controller;
 
 import com.example.model.*;
 import com.example.repository.*;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/")
-@CrossOrigin(origins = "*", allowCredentials = "true", maxAge = 3600)
+//@CrossOrigin(origins = "*", allowCredentials = "true", maxAge = 3600)
 public class MainController
 {
 	private UserService userService;

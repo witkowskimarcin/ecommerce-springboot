@@ -16,11 +16,10 @@ import org.hibernate.annotations.NaturalId;
 @Data
 public class UserModel{
 
-    @NotNull
     private Long id;
 
-    @NotBlank
-    @Size(min=3, max = 50)
+//    @NotBlank
+//    @Size(min=3, max = 50)
     private String username;
 
     @NotBlank
@@ -35,24 +34,23 @@ public class UserModel{
 
     private Set<RoleModel> roles = new HashSet<>();
 
-    @Size(min=3, max = 50)
+//    @Size(min=3, max = 50)
     private String firstname;
 
-    @Size(min=3, max = 50)
+//    @Size(min=3, max = 50)
     private String lastname;
 
-    @Size(max = 30)
+//    @Size(max = 30)
     private String locality;
 
-    @Size(max = 30)
+//    @Size(max = 30)
     private String street;
 
-    @Size(max = 6)
+//    @Size(max = 6)
     private String zipCode;
 
-    @Size(max = 20)
+//    @Size(max = 20)
     private String phone;
 
-    @NotNull
     private int active;
 }

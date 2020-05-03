@@ -1,6 +1,6 @@
 package com.example;
 
-import com.example.controller.rest.AdminController;
+import com.example.controller.AdminController;
 import com.example.model.*;
 import com.example.service.*;
 import org.junit.Test;

@@ -1,5 +1,7 @@
 package com.example.service;
 
+import com.example.message.JwtResponse;
+import com.example.model.LoginForm;
 import com.example.model.SessionModel;
 import com.example.model.UserModel;
 
@@ -16,4 +18,6 @@ public interface UserService
     UserModel getCurrentUser();
     SessionModel logged(HttpSession session);
     String getSessionId();
+    void register(UserModel user);
+    JwtResponse authenticateUser(LoginForm loginRequest);
 }
