@@ -23,8 +23,7 @@ public class AdminControllerTest
     @MockBean private PromotedProductService promotedProductService;
     @MockBean private OpportunityService opportunityService;
     @MockBean private OrderService orderService;
-    @MockBean private OrderDetailService orderDetailService;
-
+    @MockBean private ImageService imageService;
     @Autowired private AdminController adminController;
 
     @Test

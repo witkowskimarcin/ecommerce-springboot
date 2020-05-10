@@ -29,8 +29,7 @@ public class MainControllerTest
     @MockBean private ProductService productService;
     @MockBean private PromotedProductService promotedProductService;
     @MockBean private OrderService orderService;
-    @MockBean private OrderDetailService orderDetailService;
-    @MockBean private CartService cartService;
+    @MockBean private SessionService sessionService;
     @MockBean private OpportunityService opportunityService;
     @Autowired private MainController mainController;
 

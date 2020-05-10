@@ -3,6 +3,7 @@ package com.example;
 import com.example.entity.Role;
 import com.example.entity.RoleName;
 import com.example.entity.User;
+import com.example.exception.ResourceNotFoundException;
 import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,8 @@ public class InitEntryData implements ApplicationListener<ContextRefreshedEvent>
             roleRepository.save(adminRole);
             roleRepository.save(userRole);
 
-            adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
-            userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+            adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN).orElseThrow(() -> new ResourceNotFoundException("Fail! -> Cause: User Role not find."));
+            userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new ResourceNotFoundException("Fail! -> Cause: User Role not find."));
 
             User admin = new User();
             admin.setEmail("admin@email.pl");

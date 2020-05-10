@@ -1,14 +1,14 @@
 package com.example.controller;
 
+import com.example.entity.Order;
 import com.example.model.*;
-import com.example.repository.*;
 import com.example.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +26,9 @@ public class MainController
 	private PromotedProductService promotedProductService;
 	private OpportunityService opportunityService;
 	private OrderService orderService;
-	private OrderDetailService orderDetailService;
-	private CartService cartService;
+	private SessionService sessionService;
 
-	public MainController(UserService userService, ImageService imageService, CategoryService categoryService, SubcategoryService subcategoryService, ProductService productService, PromotedProductService promotedProductService, OpportunityService opportunityService, OrderService orderService, OrderDetailService orderDetailService, CartService cartService)
-	{
+	public MainController(UserService userService, ImageService imageService, CategoryService categoryService, SubcategoryService subcategoryService, ProductService productService, PromotedProductService promotedProductService, OpportunityService opportunityService, OrderService orderService, SessionService sessionService) {
 		this.userService = userService;
 		this.imageService = imageService;
 		this.categoryService = categoryService;
@@ -39,8 +37,7 @@ public class MainController
 		this.promotedProductService = promotedProductService;
 		this.opportunityService = opportunityService;
 		this.orderService = orderService;
-		this.orderDetailService = orderDetailService;
-		this.cartService = cartService;
+		this.sessionService = sessionService;
 	}
 
 	// --------------------------------------
@@ -51,7 +48,7 @@ public class MainController
 	public ResponseEntity getSessionId(){
 
 		Map<String,Object> map = new HashMap<>();
-		map.put("JSESSIONID",userService.getSessionId());
+		map.put("JSESSIONID",sessionService.getSessionId());
 		return new ResponseEntity(map, HttpStatus.OK);
 	}
 
@@ -147,6 +144,30 @@ public class MainController
 	// --------------------------------------
 
 	// --------------------------------------
+	// ORDER
+	// --------------------------------------
+
+	@GetMapping(value="/myorders")
+	public ResponseEntity<List<Order>> myorders(){
+		return new ResponseEntity(orderService.getMyOrders(), HttpStatus.OK);
+	}
+
+	@GetMapping(value="/order/{id}")
+	public ResponseEntity<Order> order(@PathVariable Long id){
+		return new ResponseEntity(orderService.getOrder(id), HttpStatus.OK);
+	}
+
+	@PutMapping(value = "/order/make")
+	public ResponseEntity cartMinus(@RequestBody @Valid OrderForm order) {
+		orderService.makeOrder(order);
+		return new ResponseEntity(HttpStatus.OK);
+	}
+
+	// --------------------------------------
+	// !ORDER
+	// --------------------------------------
+
+	// --------------------------------------
 	// CART
 	// --------------------------------------
 
@@ -186,15 +207,5 @@ public class MainController
 
 	// --------------------------------------
 	// !CART
-	// --------------------------------------
-
-	// --------------------------------------
-	// ORDER
-	// --------------------------------------
-
-	//TODO
-
-	// --------------------------------------
-	// !ORDER
 	// --------------------------------------
 }

@@ -4,7 +4,7 @@ import com.example.model.CartModel;
 
 import javax.servlet.http.HttpSession;
 
-public interface CartService
+public interface SessionService
 {
     void addProductToCart(Long id);
     CartModel getCart();
@@ -13,4 +13,5 @@ public interface CartService
     void clearCart();
     CartModel getCartInSession(HttpSession session);
     Integer getQuantity();
+    String getSessionId();
 }

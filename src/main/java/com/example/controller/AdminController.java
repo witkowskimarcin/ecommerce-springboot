@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.entity.User;
 import com.example.model.*;
 import com.example.service.*;
 import org.springframework.http.HttpStatus;
@@ -18,18 +19,37 @@ public class AdminController
 	private PromotedProductService promotedProductService;
 	private OpportunityService opportunityService;
 	private OrderService orderService;
-	private OrderDetailService orderDetailService;
+	private UserService userService;
 
-	public AdminController(CategoryService categoryService, SubcategoryService subcategoryService, ProductService productService, PromotedProductService promotedProductService, OpportunityService opportunityService, OrderService orderService, OrderDetailService orderDetailService)
-	{
+	public AdminController(CategoryService categoryService, SubcategoryService subcategoryService, ProductService productService, PromotedProductService promotedProductService, OpportunityService opportunityService, OrderService orderService, UserService userService) {
 		this.categoryService = categoryService;
 		this.subcategoryService = subcategoryService;
 		this.productService = productService;
 		this.promotedProductService = promotedProductService;
 		this.opportunityService = opportunityService;
 		this.orderService = orderService;
-		this.orderDetailService = orderDetailService;
+		this.userService = userService;
 	}
+
+	//--------------------------------
+	// Users
+	//--------------------------------
+
+	@PostMapping("/admin/user/add")
+	public ResponseEntity addUser(@Valid @RequestBody UserModel user) {
+		userService.register(user);
+		return new ResponseEntity(HttpStatus.OK);
+	}
+
+	@DeleteMapping("/admin/user/{id}/remove")
+	public ResponseEntity removeUser(@PathVariable(value = "id", required=true) Long id) {
+		userService.removeUserById(id);
+		return new ResponseEntity(HttpStatus.OK);
+	}
+
+	//--------------------------------
+	// !Users
+	//--------------------------------
 
 	//--------------------------------
 	// Categories
@@ -165,7 +185,14 @@ public class AdminController
 	@GetMapping("/admin/order/{id}/details")
 	public ResponseEntity orderDetails(@PathVariable Long id) {
 
-		return new ResponseEntity(orderDetailService.getDetailsByOrderId(id), HttpStatus.OK);
+		return new ResponseEntity(orderService.getDetailsByOrderId(id), HttpStatus.OK);
+	}
+
+	@DeleteMapping("/admin/order/{id}/remove")
+	public ResponseEntity removeOrder(@PathVariable Long id) {
+
+		orderService.removeOrder(id);
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	//--------------------------------

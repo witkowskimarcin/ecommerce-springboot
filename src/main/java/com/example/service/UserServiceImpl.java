@@ -30,8 +30,7 @@ import java.util.Set;
 public class UserServiceImpl implements UserService
 {
     private UserRepository userRepository;
-    private CartService cartService;
-    private HttpSession session;
+    private SessionService sessionService;
     private Mappers mappers;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private RoleRepository roleRepository;
@@ -39,11 +38,9 @@ public class UserServiceImpl implements UserService
     private AuthenticationManager authenticationManager;
     private JwtProvider jwtProvider;
 
-    public UserServiceImpl(UserRepository userRepository, CartService cartService, HttpSession session, Mappers mappers, RoleRepository roleRepository, PasswordEncoder encoder, AuthenticationManager authenticationManager, JwtProvider jwtProvider)
-    {
+    public UserServiceImpl(UserRepository userRepository, SessionService sessionService, Mappers mappers, RoleRepository roleRepository, PasswordEncoder encoder, AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
         this.userRepository = userRepository;
-        this.cartService = cartService;
-        this.session = session;
+        this.sessionService = sessionService;
         this.mappers = mappers;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
@@ -84,25 +81,25 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public UserModel getCurrentUser()
+    public UserModel getCurrentUserModel()
     {
         return findByUsername(getCurrentUserName());
+    }
+
+    @Override
+    public User getCurrentUser() {
+        return (userRepository.findByUsername(getCurrentUserName()).orElseThrow(
+                ()->new ResourceNotFoundException("User username: "+getCurrentUserName()+" does not exist")));
     }
 
     @Override
     public SessionModel logged(HttpSession session)
     {
         SessionModel sessionModel = new SessionModel();
-        UserModel currentUser = getCurrentUser();
+        UserModel currentUser = getCurrentUserModel();
         sessionModel.setUser(currentUser);
-        sessionModel.setCartQuantity(cartService.getQuantity());
+        sessionModel.setCartQuantity(sessionService.getQuantity());
         return sessionModel;
-    }
-
-    @Override
-    public String getSessionId()
-    {
-        return session.getId();
     }
 
     @Override
@@ -115,13 +112,13 @@ public class UserServiceImpl implements UserService
         user.setPassword(encoder.encode(userModel.getPassword()));
         
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new ResourceNotFoundException("Fail! -> Cause: User Role not find."));
         roles.add(userRole);
         user.setRoles(roles);
 
-        logger.info("Register user successfully");
-
         userRepository.save(user);
+
+        logger.info("Register user successfully");
     }
 
     @Override
@@ -136,5 +133,11 @@ public class UserServiceImpl implements UserService
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         return new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities());
+    }
+
+    @Override
+    public void removeUserById(Long id) {
+        userRepository.deleteById(id);
+        logger.info("User has been removed successfully");
     }
 }

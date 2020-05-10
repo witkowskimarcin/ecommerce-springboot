@@ -13,16 +13,15 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
-public class CartServiceImpl implements CartService
+public class SessionServiceImpl implements SessionService
 {
     private HttpSession session;
     private ProductRepository productRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public CartServiceImpl(HttpSession session, ProductRepository productRepository)
+    public SessionServiceImpl(HttpSession session, ProductRepository productRepository)
     {
         this.session = session;
         this.productRepository = productRepository;
@@ -132,6 +131,12 @@ public class CartServiceImpl implements CartService
     {
         CartModel cartModel = getCartInSession(session);
         return cartModel.getProducts().size();
+    }
+
+    @Override
+    public String getSessionId()
+    {
+        return session.getId();
     }
 
     public void removeCart() {
