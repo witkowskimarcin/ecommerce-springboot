@@ -1,5 +1,6 @@
-package com.example;
+package com.example.test;
 
+import com.example.InitEntryData;
 import com.example.entity.User;
 import com.example.exception.ResourceNotFoundException;
 import com.example.model.UserModel;

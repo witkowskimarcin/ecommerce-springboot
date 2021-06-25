@@ -56,7 +56,7 @@ public class SubcategoryServiceImpl implements SubcategoryService
         Subcategory s = mappers.mapSubcategoryModelToEntity(subcategory);
         s.setCategory(c);
         subcategoryRepository.save(s);
-        c.getSubcategories().add(s);
+//        c.getSubcategories().add(s);
         categoryRepository.save(c);
         logger.info("Add subcategory id: "+s.getId());
     }
