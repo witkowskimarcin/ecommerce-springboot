@@ -19,6 +19,10 @@ Feature: UserService class unit tests
 #    Then userService.logged
 
     Examples:
-      | id | username | email        | password | firstname | lastname  | locality | street         | zipCode | phone       | active |
-      | 1  | user1    | user@user.pl | password | Marcin    | Witkowski | Lódź     | Zielona 1/1    | 90-777  | 600-700-800 | 1      |
-      | 2  | user2    | user@user.de | password | Adam      | Małysz    | Warszawa | Mazowiecka 2/2 | 80-665  | 500-600-700 | 0      |
+      | id | username | email         | password | firstname  | lastname  | locality | street         | zipCode | phone       | active |
+      | 1  | user1    | user@user.pl  | password | Marcin     | Witkowski | Lódź     | Zielona 1/1    | 90-777  | 600-700-800 | 1      |
+      | 2  | user2    | user@user.de  | password | Adam       | Małysz    | Warszawa | Mazowiecka 2/2 | 80-665  | 500-600-700 | 0      |
+      | 3  | user3    | user3@user.de | password | Adam3      | Małysz    | Warszawa | Mazowiecka 2/2 | 80-665  | 500-600-700 | 1      |
+      | 4  | user4    | user4@user.de | password | Adam4      | Małysz    | Warszawa | Mazowiecka 2/2 | 80-665  | 500-600-700 | 1      |
+      | 5  | user5    | user5@user.de | password | Adam5      | Małysz    | Warszawa | Mazowiecka 2/2 | 80-665  | 500-600-700 | 1      |
+      | 6  | user6    | user6@user.de | password | Adam6      | Małysz    | Warszawa | Mazowiecka 2/2 | 80-665  | 500-600-700 | 1      |

@@ -16,3 +16,7 @@ Feature: CategoryService class unit tests
       | id | categoryName           |
       | 1  | Peryferia komputerowe  |
       | 2  | Podzespoły komputerowe |
+      | 3  | Gaming i streaming     |
+      | 4  | Smartfony              |
+      | 5  | TV i Audio             |
+      | 6  | Akcesoria              |

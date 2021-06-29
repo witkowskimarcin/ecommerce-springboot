@@ -18,3 +18,7 @@ Feature: SubcategoryService class unit tests
       | id | categoryName           | subcategoryName |
       | 1  | Peryferia komputerowe  | Drukarki        |
       | 2  | Podzespoły komputerowe | Karty graficzne |
+      | 3  | Gaming i streaming     | Gry             |
+      | 4  | Smartfony              | Apple           |
+      | 5  | TV i Audio             | Telewizory      |
+      | 6  | Akcesoria              | Adaptery USB    |
