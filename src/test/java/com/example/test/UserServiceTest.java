@@ -1,103 +1,124 @@
 package com.example.test;
 
-import com.example.InitEntryData;
+import com.example.CommonResources;
 import com.example.entity.User;
-import com.example.exception.ResourceNotFoundException;
+import com.example.exception.EmailAlreadyExistsException;
+import com.example.model.SessionModel;
 import com.example.model.UserModel;
-import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
-import com.example.security.jwt.JwtProvider;
-import com.example.service.SessionService;
-import com.example.service.Mappers;
 import com.example.service.UserService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class UserServiceTest
-{
-    @MockBean private UserRepository userRepository;
-    @MockBean private SessionService sessionService;
-    @MockBean private Mappers mappers;
-    @MockBean private RoleRepository roleRepository;
-    @MockBean private PasswordEncoder encoder;
-    @MockBean private AuthenticationManager authenticationManager;
-    @MockBean private JwtProvider jwtProvider;
-    @MockBean private InitEntryData initEntryData;
-//    @MockBean private SecurityContextHolder securityContextHolder;
-    @Autowired private UserService userService;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
 
-    private static final String TEST_USERNAME = "TestUser";
+public class UserServiceTest {
+    @Autowired
+    private UserRepository userRepository;
 
-    @Test
-    public void findByUsername(){
-//        User u = new User();
-//        u.setEmail(TEST_USERNAME);
-//        when(userRepository.findByEmail(TEST_USERNAME).orElseThrow(
-//                ()->new ResourceNotFoundException("User username: "+TEST_USERNAME+" does not exist"))).thenReturn(u);
-//       UserModel result = userService.findByEmail(TEST_USERNAME);
-//       assertEquals(result.getEmail(), TEST_USERNAME);
+    @Autowired
+    private Authentication auth;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private HttpSession session;
+
+    @Before
+    public void before() {
+        session = mock(HttpSession.class);
     }
 
-    @Test
-    public void  findByEmail(){
-        // TODO
+    @When("getAuthentication.getName")
+    public void getAuthenticationName() {
+        when(auth.getName()).thenReturn(CommonResources.userEntity.getEmail());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn(CommonResources.userEntity.getEmail());
     }
 
-    @Test
-    public void  existsByUsername(){
-        // TODO
+    @When("userRepository.findByUsername")
+    public void userRepositoryFindByUsername() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(CommonResources.userEntity));
     }
 
-    @Test
-    public void  existsByEmail(){
-        // TODO
+    @When("userRepository.findByEmail")
+    public void userRepositoryFindByEmail() {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(CommonResources.userEntity));
     }
 
-    @Test
-    public void  getCurrentUserName(){
-//        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn(TEST_USERNAME);
-//        User u = new User();
-//        u.setEmail(TEST_USERNAME);
-////        when(userRepository.findByUsername(TEST_USERNAME).orElseThrow(
-////                ()->new ResourceNotFoundException("User username: "+TEST_USERNAME+" does not exist"))).thenReturn(u);
-//        assertEquals(userService.getCurrentUserName(), TEST_USERNAME);
-////        assertEquals(TEST_USERNAME, TEST_USERNAME);
+    @When("userRepository.existsByUsername")
+    public void userRepositoryExistsByUsername() {
+        when(userRepository.existsByUsername(anyString())).thenReturn(true);
     }
 
-    @Test
-    public void  getCurrentUser(){
-        // TODO
+    @When("userRepository.existsByEmail")
+    public void userRepositoryExistsByEmail() {
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
     }
 
-    @Test
-    public void  logged(){
-        // TODO
+    @Then("userService.findByUsername")
+    public void findByUsername() {
+        UserModel result = userService.findByUsername(anyString());
+        assertNotNull(result.getEmail());
     }
 
-    @Test
-    public void  getSessionId(){
-        // TODO
+    @Then("userService.findByEmail")
+    public void findByEmail() {
+        UserModel result = userService.findByEmail(anyString());
+        assertNotNull(result.getEmail());
     }
 
-    @Test
-    public void  register(){
-        // TODO
+    @Then("userService.existsByUsername")
+    public void existsByUsername() {
+        boolean result = userService.existsByUsername(anyString());
+        assertTrue(result);
     }
 
-    @Test
-    public void  authenticateUser(){
-        // TODO
+    @Then("userService.existsByEmail")
+    public void existsByEmail() {
+        boolean result = userService.existsByUsername(anyString());
+        assertTrue(result);
     }
+
+    @Then("userService.getCurrentUserName")
+    public void getCurrentUserName() {
+        String result = userService.getCurrentUserName();
+        assertTrue(result.length() > 0);
+    }
+
+    @Then("userService.getCurrentUser")
+    public void getCurrentUser() {
+        User result = userService.getCurrentUser();
+        assertNotNull(result);
+    }
+
+    @Then("userService.register")
+    public void register() {
+        try {
+            userService.register(CommonResources.userModel);
+        } catch (EmailAlreadyExistsException e) {
+            Assertions.assertThrows(EmailAlreadyExistsException.class, () -> {
+                throw e;
+            });
+        }
+    }
+
+    //    @Then("userService.logged")
+    //    public void logged(){
+    //        SessionModel result = userService.logged(session);
+    //        assertNotNull(result);
+    //    }
 }

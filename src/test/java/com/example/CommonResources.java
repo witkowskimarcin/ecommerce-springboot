@@ -9,13 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class CommonResources {
@@ -35,6 +31,10 @@ public class CommonResources {
     private OrderRepository orderRepository;
     @Autowired
     private OpportunityRepository opportunityRepository;
+//    @Autowired
+//    private SessionService sessionService;
+//    @Autowired
+//    private RoleRepository roleRepository;
 
     public static Category categoryEntity;
     public static CategoryModel categoryModel;
@@ -52,6 +52,8 @@ public class CommonResources {
     public static Order orderEntity;
     public static OrderDetailModel orderDetailModel;
     public static OrderDetail orderDetailEntity;
+    public static User userEntity;
+    public static UserModel userModel;
 
     @Given("Prepare category with id: {int}, name: {string}")
     public void prepareCategory(long id, String categoryName) {
@@ -185,6 +187,33 @@ public class CommonResources {
         orderDetailEntity.setId(id);
         orderDetailEntity.setQuantity(quantity);
         orderDetailEntity.setProduct(productEntity);
+    }
+
+    @Given("Prepare user with id: {int}, username: {string}, email: {string}, password: {string}, firstname: {string}, lastname: {string}, locality: {string}, street: {string}, zipCode: {string}, phone: {string}, active: {int}")
+    public void prepareUser(long id, String username, String email, String password, String firstname, String lastname, String locality, String street, String zipCode, String phone, int active) {
+        userModel = new UserModel();
+        userModel.setId(id);
+        userModel.setUsername(username);
+        userModel.setEmail(email);
+        userModel.setPassword(password);
+        userModel.setFirstname(firstname);
+        userModel.setLastname(lastname);
+        userModel.setLocality(locality);
+        userModel.setStreet(street);
+        userModel.setPhone(phone);
+        userModel.setActive(active);
+
+        userEntity = new User();
+        userEntity.setId(id);
+        userEntity.setUsername(username);
+        userEntity.setEmail(email);
+        userEntity.setPassword(password);
+        userEntity.setFirstname(firstname);
+        userEntity.setLastname(lastname);
+        userEntity.setLocality(locality);
+        userEntity.setStreet(street);
+        userEntity.setPhone(phone);
+        userEntity.setActive(active);
     }
 
     @When("categoryRepository.findAll")

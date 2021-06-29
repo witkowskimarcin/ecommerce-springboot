@@ -20,8 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class SubcategoryServiceTest {
     @Autowired
     private SubcategoryRepository subcategoryRepository;

@@ -21,8 +21,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class ProductServiceTest {
     @Autowired
     private ProductRepository productRepository;
@@ -56,7 +54,6 @@ public class ProductServiceTest {
         assertEquals(1, result.size());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
     @Then("productService.addProduct")
     public void addProductTest() {
         productService.addProduct(1L, CommonResources.productModel);
